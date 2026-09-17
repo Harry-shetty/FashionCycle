@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-
+import FashionCycleLogo from "../shared/FashionCycleLogo";
 export default function Footer() {
   return (
     <footer
@@ -22,37 +22,13 @@ export default function Footer() {
             <Link
               to="/"
               style={{
-                display: "flex",
+                display: "inline-flex",
                 alignItems: "center",
-                gap: "10px",
                 marginBottom: "1rem",
                 textDecoration: "none",
               }}
             >
-              <div
-                style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: "50%",
-                  background: "var(--accent)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "14px",
-                }}
-              >
-                ♻
-              </div>
-              <span
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: "1.2rem",
-                  fontWeight: 700,
-                  color: "var(--fg)",
-                }}
-              >
-                Fashion<span style={{ color: "var(--accent)" }}>Cycle</span>
-              </span>
+              <FashionCycleLogo size={14} />
             </Link>
             <p
               style={{

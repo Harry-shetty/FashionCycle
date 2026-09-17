@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import FashionCycleLogo from "../shared/FashionCycleLogo";
 import { BANNER_HEIGHT, NAVBAR_HEIGHT } from "../../utils/layoutConstants";
 
 const PUBLIC_LINKS = [
@@ -59,41 +60,9 @@ export default function Navbar() {
       {/* Logo */}
       <Link
         to="/"
-        style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none" }}
+        style={{ display: "flex", alignItems: "center", textDecoration: "none" }}
       >
-        <div
-          style={{
-            width: 32,
-            height: 32,
-            borderRadius: "50%",
-            background: "var(--accent)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            animation: "pulse-green 3s ease infinite",
-          }}
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M12 4V2M12 22v-2M4 12H2M22 12h-2M6.34 6.34 4.93 4.93M19.07 19.07l-1.41-1.41M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
-              stroke="#0a0a08"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-            />
-            <circle cx="12" cy="12" r="4" fill="#0a0a08" />
-          </svg>
-        </div>
-        <span
-          style={{
-            fontFamily: "var(--font-display)",
-            fontSize: "1.35rem",
-            fontWeight: 700,
-            letterSpacing: "-0.02em",
-            color: "var(--fg)",
-          }}
-        >
-          Fashion<span style={{ color: "var(--accent)" }}>Cycle</span>
-        </span>
+        <FashionCycleLogo size={12} />
       </Link>
 
       {/* Desktop nav links */}

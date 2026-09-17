@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-
+import FashionCycleLogo from "../../components/shared/FashionCycleLogo";
 /* ─── Reveal on scroll ─── */
 function useReveal() {
   useEffect(() => {
@@ -136,12 +136,7 @@ function Sidebar({ active, setActive }: { active: string; setActive: (s: string)
     >
       {/* Logo */}
       <div style={{ padding: "1.75rem 1.5rem 1.25rem", borderBottom: "1px solid var(--border)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 30, height: 30, borderRadius: "50%", background: "var(--accent)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, animation: "pulse-green 3s ease infinite" }}>♻</div>
-          <span style={{ fontFamily: "var(--font-display)", fontSize: "1.25rem", fontWeight: 700, letterSpacing: "-0.02em" }}>
-            Fashion<span style={{ color: "var(--accent)" }}>Cycle</span>
-          </span>
-        </div>
+        <FashionCycleLogo size={14} />
       </div>
 
       {/* User */}
