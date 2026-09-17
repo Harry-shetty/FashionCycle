@@ -10,6 +10,10 @@ import ShopPage from "../pages/Shop";
 import LoginPage from "../pages/Login";
 import RegisterPage from "../pages/Register";
 import ProfilePage from "../pages/Profile";
+import ListingsPage from "../pages/Listings";
+import OrdersPage from "../pages/Orders";
+import MessagesPage from "../pages/Messages";
+import ImpactPage from "../pages/Impact";
 import NotFoundPage from "../pages/NotFound";
 
 const routes: RouteObject[] = [
@@ -34,6 +38,38 @@ const routes: RouteObject[] = [
         element: (
           <ProtectedRoute>
             <ProfilePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "listings",
+        element: (
+          <ProtectedRoute>
+            <ListingsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "orders",
+        element: (
+          <ProtectedRoute>
+            <OrdersPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "messages",
+        element: (
+          <ProtectedRoute>
+            <MessagesPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "impact",
+        element: (
+          <ProtectedRoute>
+            <ImpactPage />
           </ProtectedRoute>
         ),
       },

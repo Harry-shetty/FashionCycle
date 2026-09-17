@@ -2,14 +2,14 @@ const testimonials = [
   {
     name: "Harsha Shetty",
     handle: "@ariawears",
-    text: "I've cleared out my entire winter wardrobe and made €380. The whole process was so smooth — FashionCycle is genuinely changing how I think about clothes.",
+    text: "I've cleared out my entire winter wardrobe and made ₹380. The whole process was so smooth — FashionCycle is genuinely changing how I think about clothes.",
     avatar: "AC",
     items: 14,
   },
   {
     name: "Rohit Kapoor",
     handle: "@rohitk",
-    text: "Found a Comme des Garçons jacket here for €90. That's not possible anywhere else. This platform attracts people who actually care about fashion.",
+    text: "Found a Comme des Garçons jacket here for ₹90. That's not possible anywhere else. This platform attracts people who actually care about fashion.",
     avatar: "RK",
     items: 8,
   },

@@ -1,8 +1,14 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 
 export default function ProfilePage() {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    logout();
+    navigate("/");
+  }
 
   if (!user) return null; // ProtectedRoute handles the redirect
 
@@ -140,7 +146,7 @@ export default function ProfilePage() {
             Browse Shop
           </Link>
           <button
-            onClick={logout}
+            onClick={handleLogout}
             style={{
               background: "transparent",
               border: "1px solid var(--border)",

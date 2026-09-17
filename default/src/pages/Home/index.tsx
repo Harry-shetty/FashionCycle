@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import FashionCycleLogo from "../../components/shared/FashionCycleLogo";
+import { useAuth } from "../../hooks/useAuth";
 /* ─── Reveal on scroll ─── */
 function useReveal() {
   useEffect(() => {
@@ -95,7 +96,7 @@ const RECOMMENDED = [
 
 const MESSAGES = [
   { from: "Elena M.", handle: "@elenam", msg: "Is the blazer still available? Happy to pay asking price!", time: "5m", unread: true, avatar: "EM" },
-  { from: "Tom S.", handle: "@tomstyle", msg: "Could you do €80 for the scarf? Love the colour!", time: "1h", unread: true, avatar: "TS" },
+  { from: "Tom S.", handle: "@tomstyle", msg: "Could you do ₹80 for the scarf? Love the colour!", time: "1h", unread: true, avatar: "TS" },
   { from: "Priya N.", handle: "@priyaon", msg: "Thank you for the fast shipping! 5 stars ✨", time: "3h", unread: false, avatar: "PN" },
   { from: "Jake W.", handle: "@jakew", msg: "Interested in swapping for a Filippa K item?", time: "1d", unread: false, avatar: "JW" },
 ];
@@ -250,7 +251,7 @@ function TopBar() {
             <div style={{ position: "absolute", right: 0, top: "calc(100% + 8px)", background: "var(--card-bg)", border: "1px solid var(--border)", borderRadius: "14px", width: 300, padding: "1rem", zIndex: 99, boxShadow: "0 20px 60px rgba(0,0,0,0.5)", animation: "fadeUp 0.25s ease both" }}>
               <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "var(--accent)", letterSpacing: "0.1em", marginBottom: "0.75rem" }}>NOTIFICATIONS</div>
               {[
-                { icon: "💬", text: "Tom offered €80 for your Acne scarf", time: "5m" },
+                { icon: "💬", text: "Tom offered ₹80 for your Acne scarf", time: "5m" },
                 { icon: "❤️", text: "Elena liked your COS Blazer listing", time: "18m" },
                 { icon: "📦", text: "Your order #FC-00398 has shipped!", time: "2h" },
                 { icon: "✨", text: "You reached Pro Seller status!", time: "1d" },
@@ -277,6 +278,8 @@ function TopBar() {
 
 /* ─── Welcome Banner ─── */
 function WelcomeBanner() {
+  const { user } = useAuth();
+  const firstName = user?.name.split(" ")[0].toUpperCase() || "FRIEND";
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
   return (
@@ -300,7 +303,7 @@ function WelcomeBanner() {
       <div style={{ position: "absolute", right: -80, top: -80, width: 300, height: 300, borderRadius: "50%", background: "radial-gradient(circle, rgba(138,223,122,0.08) 0%, transparent 70%)", pointerEvents: "none" }} />
       <div>
         <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.7rem", color: "var(--accent)", letterSpacing: "0.1em", marginBottom: "0.5rem" }}>
-          {greeting.toUpperCase()}, SOPHIA ✦
+          {greeting.toUpperCase()}, {firstName} ✦
         </div>
         <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.8rem, 3vw, 2.5rem)", fontWeight: 900, letterSpacing: "-0.03em", lineHeight: 1.1, marginBottom: "0.5rem" }}>
           Your wardrobe,<br />
@@ -329,7 +332,7 @@ function WelcomeBanner() {
 /* ─── Stats Row ─── */
 function StatsRow() {
   const stats = [
-    { label: "Total Earnings", value: 836, prefix: "€", suffix: "", trend: "+€124 this month", up: true },
+    { label: "Total Earnings", value: 836, prefix: "₹", suffix: "", trend: "+₹124 this month", up: true },
     { label: "Items Sold", value: 12, prefix: "", suffix: "", trend: "+3 this month", up: true },
     { label: "Profile Views", value: 4280, prefix: "", suffix: "", trend: "+18% vs last month", up: true },
     { label: "Average Rating", value: 4.9, prefix: "", suffix: " ★", trend: "48 reviews", up: true },
@@ -414,7 +417,7 @@ function MyListings() {
                   <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "var(--accent)", letterSpacing: "0.12em", border: "1px solid var(--accent)", padding: "0.3rem 0.8rem", borderRadius: "100px" }}>SOLD</span>
                 </div>
               )}
-              <div style={{ position: "absolute", bottom: "0.5rem", right: "0.5rem", background: "rgba(10,10,8,0.85)", borderRadius: "100px", padding: "0.25rem 0.65rem", fontFamily: "var(--font-display)", fontSize: "0.85rem", fontWeight: 700, color: "var(--accent)" }}>€{item.price}</div>
+              <div style={{ position: "absolute", bottom: "0.5rem", right: "0.5rem", background: "rgba(10,10,8,0.85)", borderRadius: "100px", padding: "0.25rem 0.65rem", fontFamily: "var(--font-display)", fontSize: "0.85rem", fontWeight: 700, color: "var(--accent)" }}>₹{item.price}</div>
             </div>
             <div style={{ fontFamily: "var(--font-display)", fontSize: "0.9rem", fontWeight: 600, letterSpacing: "-0.01em", marginBottom: "0.2rem" }}>{item.title}</div>
             <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.62rem", color: "var(--muted)", letterSpacing: "0.04em" }}>{item.brand} · {item.size}</div>
@@ -453,7 +456,7 @@ function OrdersAndMessages() {
               <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.62rem", color: "var(--muted)", marginTop: "2px" }}>{o.id} · {o.date}</div>
             </div>
             <div style={{ textAlign: "right", flexShrink: 0 }}>
-              <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "0.95rem", color: "var(--fg)" }}>€{o.price}</div>
+              <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "0.95rem", color: "var(--fg)" }}>₹{o.price}</div>
               <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.62rem", color: statusColor[o.status] || "var(--muted)", marginTop: "2px" }}>{o.status}</div>
             </div>
           </div>
@@ -541,7 +544,7 @@ function ActivityFeed() {
                 {f.action} · {f.time}
               </div>
               <div style={{ fontFamily: "var(--font-display)", fontSize: "0.9rem", fontWeight: 600, letterSpacing: "-0.01em", marginBottom: "0.15rem" }}>{f.item}</div>
-              <div style={{ fontFamily: "var(--font-body)", fontSize: "0.85rem", color: "var(--accent)", fontWeight: 600 }}>€{f.price}</div>
+              <div style={{ fontFamily: "var(--font-body)", fontSize: "0.85rem", color: "var(--accent)", fontWeight: 600 }}>₹{f.price}</div>
             </div>
           </div>
         ))}
@@ -582,7 +585,7 @@ function Recommended() {
                 onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.15)")}
                 onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
               >{saves[i] ? "♥" : "♡"}</button>
-              <div style={{ position: "absolute", bottom: "0.5rem", right: "0.5rem", background: "var(--accent)", borderRadius: "100px", padding: "0.25rem 0.75rem", fontFamily: "var(--font-display)", fontSize: "0.85rem", fontWeight: 700, color: "#0a0a08" }}>€{item.price}</div>
+              <div style={{ position: "absolute", bottom: "0.5rem", right: "0.5rem", background: "var(--accent)", borderRadius: "100px", padding: "0.25rem 0.75rem", fontFamily: "var(--font-display)", fontSize: "0.85rem", fontWeight: 700, color: "#0a0a08" }}>₹{item.price}</div>
             </div>
             <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6rem", color: "var(--muted)", letterSpacing: "0.04em", marginBottom: "0.2rem" }}>{item.brand} · {item.size}</div>
             <div style={{ fontFamily: "var(--font-display)", fontSize: "0.9rem", fontWeight: 600, letterSpacing: "-0.01em" }}>{item.title}</div>
@@ -604,7 +607,7 @@ function ImpactTracker() {
           { label: "CO₂ Prevented", value: IMPACT.co2, unit: "kg", icon: "🌿", desc: "Carbon kept out of the atmosphere" },
           { label: "Water Saved", value: IMPACT.water, unit: "L", icon: "💧", desc: "Litres vs. producing new clothing" },
           { label: "Items Rescued", value: IMPACT.items, unit: "pieces", icon: "♻", desc: "Garments saved from landfill" },
-          { label: "Money Earned", value: IMPACT.money, unit: "€", icon: "💚", desc: "Back in your pocket from selling" },
+          { label: "Money Earned", value: IMPACT.money, unit: "₹", icon: "💚", desc: "Back in your pocket from selling" },
         ].map((s, i) => (
           <div
             key={s.label}
@@ -760,28 +763,40 @@ function SellPrompt() {
 
 /* ─── Profile Card ─── */
 function ProfileCard() {
+  const { user } = useAuth();
+  if (!user) return null;
+
+  const handle = `@${user.name.toLowerCase().replace(/\s+/g, "")}`;
+  const avatar = user.name.slice(0, 2).toUpperCase();
+  const followers = 124;
+  const following = 42;
+  const verified = true;
+  const plan = "Pro Seller";
+  const city = "Bengaluru";
+  const memberSince = new Date(user.createdAt || Date.now()).toLocaleDateString("en-US", { month: "long", year: "numeric" });
+
   return (
     <div style={{ ...card, padding: "1.5rem", marginBottom: "1rem", textAlign: "center" }}>
       <div style={{ width: 64, height: 64, borderRadius: "50%", background: "linear-gradient(135deg,var(--accent),var(--accent2))", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-display)", fontWeight: 900, fontSize: "1.25rem", color: "#0a0a08", margin: "0 auto 0.75rem" }}>
-        {USER.avatar}
+        {avatar}
       </div>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem", marginBottom: "0.2rem" }}>
-        <span style={{ fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "0.95rem", color: "var(--fg)" }}>{USER.name}</span>
-        {USER.verified && <span style={{ fontSize: "0.8rem" }}>✓</span>}
+        <span style={{ fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "0.95rem", color: "var(--fg)" }}>{user.name}</span>
+        {verified && <span style={{ fontSize: "0.8rem", color: "var(--accent)" }}>✓</span>}
       </div>
-      <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "var(--muted)", marginBottom: "0.5rem" }}>{USER.handle}</div>
+      <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "var(--muted)", marginBottom: "0.5rem" }}>{handle}</div>
       <div style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem", background: "rgba(138,223,122,0.1)", border: "1px solid rgba(138,223,122,0.25)", borderRadius: "100px", padding: "0.25rem 0.75rem", marginBottom: "1rem" }}>
-        <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6rem", color: "var(--accent)", letterSpacing: "0.06em" }}>⭐ {USER.plan}</span>
+        <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6rem", color: "var(--accent)", letterSpacing: "0.06em" }}>⭐ {plan}</span>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem", marginBottom: "0.75rem" }}>
-        {[{ label: "Followers", val: USER.followers }, { label: "Following", val: USER.following }].map((s) => (
+        {[{ label: "Followers", val: followers }, { label: "Following", val: following }].map((s) => (
           <div key={s.label} style={{ background: "rgba(255,255,255,0.03)", borderRadius: "10px", padding: "0.6rem" }}>
             <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "1.1rem", color: "var(--fg)" }}>{s.val.toLocaleString()}</div>
             <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6rem", color: "var(--muted)", marginTop: "2px" }}>{s.label}</div>
           </div>
         ))}
       </div>
-      <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6rem", color: "var(--muted)" }}>{USER.city} · Member since {USER.memberSince}</div>
+      <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.6rem", color: "var(--muted)" }}>{city} · Member since {memberSince}</div>
     </div>
   );
 }

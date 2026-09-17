@@ -133,6 +133,7 @@ export default function ShopPage() {
                     }}
                   >
                     ${item.price}
+                    {item.price}₹
                   </div>
                 </div>
                 <div
