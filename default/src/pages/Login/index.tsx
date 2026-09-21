@@ -6,8 +6,8 @@ export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("harsha@gmail.com");
+  const [password, setPassword] = useState("iambatman");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 

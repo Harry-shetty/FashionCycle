@@ -277,7 +277,7 @@ export default function Hero() {
                 color: "var(--accent)",
               }}
             >
-              $48
+              48₹
             </span>
           </div>
         </div>

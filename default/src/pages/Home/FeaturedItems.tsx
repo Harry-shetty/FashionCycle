@@ -169,7 +169,7 @@ export default function FeaturedItems() {
                     color: "#0a0a08",
                   }}
                 >
-                  ${item.price}
+                  {item.price}₹
                 </div>
               </div>
               <div

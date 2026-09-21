@@ -132,7 +132,6 @@ export default function ShopPage() {
                       color: "#0a0a08",
                     }}
                   >
-                    ${item.price}
                     {item.price}₹
                   </div>
                 </div>
