@@ -107,7 +107,7 @@ const IMPACT = { co2: 48.4, water: 3820, items: 12, money: 836 };
 ======================================================== */
 
 /* ─── Sidebar ─── */
-function Sidebar({ active, setActive }: { active: string; setActive: (s: string) => void }) {
+function Sidebar({ active, setActive, open, setOpen }: { active: string; setActive: (s: string) => void; open?: boolean; setOpen?: (o: boolean) => void }) {
   const nav = [
     { id: "home", label: "Home", icon: "⌂" },
     { id: "shop", label: "Shop", icon: "◈" },
@@ -119,21 +119,24 @@ function Sidebar({ active, setActive }: { active: string; setActive: (s: string)
     { id: "saved", label: "Saved Items", icon: "♡" },
   ];
   return (
-    <aside
-      style={{
-        width: 240,
-        minHeight: "100vh",
-        background: "#080806",
-        borderRight: "1px solid var(--border)",
-        display: "flex",
-        flexDirection: "column",
-        position: "sticky",
-        top: 0,
-        height: "100vh",
-        overflowY: "auto",
-        flexShrink: 0,
-      }}
-    >
+    <>
+      <div className={`home-sidebar-backdrop ${open ? "open" : ""}`} onClick={() => setOpen?.(false)} />
+      <aside
+        className={`home-sidebar ${open ? "open" : ""}`}
+        style={{
+          width: 240,
+          minHeight: "100vh",
+          background: "#080806",
+          borderRight: "1px solid var(--border)",
+          display: "flex",
+          flexDirection: "column",
+          position: "sticky",
+          top: 0,
+          height: "100vh",
+          overflowY: "auto",
+          flexShrink: 0,
+        }}
+      >
       {/* Logo */}
       <div style={{ padding: "1.75rem 1.5rem 1.25rem", borderBottom: "1px solid var(--border)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -222,15 +225,23 @@ function Sidebar({ active, setActive }: { active: string; setActive: (s: string)
         </button>
       </div>
     </aside>
+    </>
   );
 }
 
 /* ─── Top Bar ─── */
-function TopBar() {
+function TopBar({ onToggleSidebar }: { onToggleSidebar?: () => void }) {
   const [notifOpen, setNotifOpen] = useState(false);
   return (
-    <header style={{ height: 68, borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 2rem", background: "rgba(10,10,8,0.95)", backdropFilter: "blur(16px)", position: "sticky", top: 0, zIndex: 50 }}>
+    <header style={{ height: 68, borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 clamp(1rem, 3vw, 2rem)", background: "rgba(10,10,8,0.95)", backdropFilter: "blur(16px)", position: "sticky", top: 0, zIndex: 50 }}>
       <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+        <button
+          className="home-mobile-toggle"
+          onClick={onToggleSidebar}
+          aria-label="Toggle Navigation"
+        >
+          ☰
+        </button>
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "rgba(255,255,255,0.05)", border: "1px solid var(--border)", borderRadius: "10px", padding: "0.5rem 1rem" }}>
           <span style={{ color: "var(--muted)", fontSize: "0.8rem" }}>🔍</span>
           <input
@@ -286,7 +297,7 @@ function WelcomeBanner() {
   const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
   return (
     <div
-      className="rv"
+      className="rv welcome-banner-content"
       style={{
         ...card,
         background: "linear-gradient(135deg, #0d1f0d 0%, #131f0a 50%, #0d1a13 100%)",
@@ -315,13 +326,13 @@ function WelcomeBanner() {
           You have 3 active listings, 2 new messages, and an order arriving tomorrow.
         </p>
       </div>
-      <div style={{ display: "flex", gap: "1rem", flexShrink: 0, flexWrap: "wrap" }}>
+      <div className="welcome-stats-row" style={{ display: "flex", gap: "1rem", flexShrink: 0, flexWrap: "wrap" }}>
         {[
           { icon: "◧", label: "3 Active listings" },
           { icon: "◻", label: "2 New messages" },
           { icon: "📦", label: "1 Order in transit" },
         ].map((s) => (
-          <div key={s.label} style={{ background: "rgba(138,223,122,0.1)", border: "1px solid rgba(138,223,122,0.2)", borderRadius: "12px", padding: "0.75rem 1.1rem", textAlign: "center", minWidth: 120 }}>
+          <div key={s.label} className="welcome-stat-pill" style={{ background: "rgba(138,223,122,0.1)", border: "1px solid rgba(138,223,122,0.2)", borderRadius: "12px", padding: "0.75rem 1.1rem", textAlign: "center", minWidth: 120 }}>
             <div style={{ fontSize: "1.3rem", marginBottom: "0.3rem" }}>{s.icon}</div>
             <div style={{ fontFamily: "var(--font-body)", fontSize: "0.75rem", color: "var(--fg)", fontWeight: 500 }}>{s.label}</div>
           </div>
@@ -340,11 +351,11 @@ function StatsRow() {
     { label: "Average Rating", value: 4.9, prefix: "", suffix: " ★", trend: "48 reviews", up: true },
   ];
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem", marginBottom: "1.5rem" }}>
+    <div className="stats-grid-4" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem", marginBottom: "1.5rem" }}>
       {stats.map((s, i) => (
         <div
           key={s.label}
-          className="rv"
+          className="rv stat-card-item"
           data-d={i * 80}
           style={{ ...card, padding: "1.5rem", transition: "transform 0.3s ease, border-color 0.3s ease" }}
           onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = "translateY(-4px)"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(138,223,122,0.3)"; }}
@@ -367,17 +378,17 @@ function StatsRow() {
 
 /* ─── My Listings ─── */
 function MyListings() {
-  const [filter, setFilter] = useState("all");
+  const [filter, setFilter] = useState<"all" | "active" | "sold">("all");
   const filtered = filter === "all" ? MY_LISTINGS : MY_LISTINGS.filter((l) => l.status === filter);
   return (
     <div className="rv" style={{ ...card, padding: "1.75rem", marginBottom: "1.5rem" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.25rem", flexWrap: "wrap", gap: "0.75rem" }}>
         <div>
-          <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "var(--accent)", letterSpacing: "0.1em", marginBottom: "0.3rem" }}>MY CLOSET</div>
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "var(--accent)", letterSpacing: "0.1em", marginBottom: "0.3rem" }}>MY CLOSET · {MY_LISTINGS.length} PIECES</div>
           <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.4rem", fontWeight: 700, letterSpacing: "-0.02em" }}>Active Listings</h2>
         </div>
         <div style={{ display: "flex", gap: "0.5rem" }}>
-          {["all", "active", "sold"].map((f) => (
+          {(["all", "active", "sold"] as const).map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
@@ -400,36 +411,79 @@ function MyListings() {
           ))}
         </div>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
-        {filtered.map((item, i) => (
-          <div
-            key={item.id}
-            className="rv-s"
-            data-d={i * 80}
-            style={{ cursor: "pointer", position: "relative" }}
-          >
-            <div
-              style={{ aspectRatio: "3/4", borderRadius: "14px", overflow: "hidden", background: "#1a1a14", marginBottom: "0.75rem", position: "relative" }}
-              onMouseEnter={(e) => { const img = e.currentTarget.querySelector("img") as HTMLImageElement; if (img) img.style.transform = "scale(1.08)"; }}
-              onMouseLeave={(e) => { const img = e.currentTarget.querySelector("img") as HTMLImageElement; if (img) img.style.transform = "scale(1)"; }}
-            >
-              <img src={item.img} alt={item.title} style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s cubic-bezier(0.16,1,0.3,1)" }} />
-              {item.status === "sold" && (
-                <div style={{ position: "absolute", inset: 0, background: "rgba(10,10,8,0.65)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "var(--accent)", letterSpacing: "0.12em", border: "1px solid var(--accent)", padding: "0.3rem 0.8rem", borderRadius: "100px" }}>SOLD</span>
-                </div>
-              )}
-              <div style={{ position: "absolute", bottom: "0.5rem", right: "0.5rem", background: "rgba(10,10,8,0.85)", borderRadius: "100px", padding: "0.25rem 0.65rem", fontFamily: "var(--font-display)", fontSize: "0.85rem", fontWeight: 700, color: "var(--accent)" }}>€{item.price}</div>
-            </div>
-            <div style={{ fontFamily: "var(--font-display)", fontSize: "0.9rem", fontWeight: 600, letterSpacing: "-0.01em", marginBottom: "0.2rem" }}>{item.title}</div>
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.62rem", color: "var(--muted)", letterSpacing: "0.04em" }}>{item.brand} · {item.size}</div>
-            <div style={{ display: "flex", gap: "0.75rem", marginTop: "0.4rem" }}>
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.62rem", color: "var(--muted)" }}>👁 {item.views}</span>
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.62rem", color: "var(--muted)" }}>♡ {item.likes}</span>
-            </div>
+
+      {filtered.length === 0 ? (
+        <div
+          style={{
+            textAlign: "center",
+            padding: "2.5rem 1.5rem",
+            background: "rgba(255, 255, 255, 0.02)",
+            borderRadius: "14px",
+            border: "1px dashed var(--border)",
+          }}
+        >
+          <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>👗</div>
+          <div style={{ fontFamily: "var(--font-display)", fontSize: "1.1rem", fontWeight: 700, marginBottom: "0.35rem" }}>
+            {filter === "sold" ? "No sold pieces yet" : "No active listings found"}
           </div>
-        ))}
-      </div>
+          <p style={{ fontFamily: "var(--font-body)", fontSize: "0.85rem", color: "var(--muted)", maxWidth: 360, margin: "0 auto 1rem" }}>
+            {filter === "sold" ? "Sold items will appear here once purchased." : "List items to display them in your closet."}
+          </p>
+          {filter !== "all" && (
+            <button
+              onClick={() => setFilter("all")}
+              style={{
+                background: "var(--accent)",
+                color: "#0a0a08",
+                border: "none",
+                borderRadius: "100px",
+                padding: "0.45rem 1.2rem",
+                fontSize: "0.8rem",
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
+            >
+              View All Pieces
+            </button>
+          )}
+        </div>
+      ) : (
+        <div className="four-col-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
+          {filtered.slice(0, 4).map((item) => (
+            <div
+              key={item.id}
+              style={{
+                cursor: "pointer",
+                position: "relative",
+                opacity: 1,
+                transition: "transform 0.25s ease",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-4px)")}
+              onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
+            >
+              <div
+                style={{ aspectRatio: "3/4", borderRadius: "14px", overflow: "hidden", background: "#1a1a14", marginBottom: "0.75rem", position: "relative" }}
+                onMouseEnter={(e) => { const img = e.currentTarget.querySelector("img") as HTMLImageElement; if (img) img.style.transform = "scale(1.08)"; }}
+                onMouseLeave={(e) => { const img = e.currentTarget.querySelector("img") as HTMLImageElement; if (img) img.style.transform = "scale(1)"; }}
+              >
+                <img src={item.img} alt={item.title} style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s cubic-bezier(0.16,1,0.3,1)" }} />
+                {item.status === "sold" && (
+                  <div style={{ position: "absolute", inset: 0, background: "rgba(10,10,8,0.65)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "var(--accent)", letterSpacing: "0.12em", border: "1px solid var(--accent)", padding: "0.3rem 0.8rem", borderRadius: "100px" }}>SOLD</span>
+                  </div>
+                )}
+                <div style={{ position: "absolute", bottom: "0.5rem", right: "0.5rem", background: "rgba(10,10,8,0.85)", borderRadius: "100px", padding: "0.25rem 0.65rem", fontFamily: "var(--font-display)", fontSize: "0.85rem", fontWeight: 700, color: "var(--accent)" }}>₹{item.price}</div>
+              </div>
+              <div style={{ fontFamily: "var(--font-display)", fontSize: "0.9rem", fontWeight: 600, letterSpacing: "-0.01em", marginBottom: "0.2rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{item.title}</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.62rem", color: "var(--muted)", letterSpacing: "0.04em" }}>{item.brand} · {item.size}</div>
+              <div style={{ display: "flex", gap: "0.75rem", marginTop: "0.4rem" }}>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.62rem", color: "var(--muted)" }}>👁 {item.views}</span>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.62rem", color: "var(--muted)" }}>♡ {item.likes}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -438,9 +492,9 @@ function MyListings() {
 function OrdersAndMessages() {
   const statusColor: Record<string, string> = { Delivered: "var(--accent)", "In Transit": "#fbbf24" };
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem", marginBottom: "1.5rem" }}>
+    <div className="two-col-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem", marginBottom: "1.5rem" }}>
       {/* Orders */}
-      <div className="rv-l" style={{ ...card, padding: "1.75rem" }}>
+      <div className="rv-l card-pad" style={{ ...card, padding: "1.75rem" }}>
         <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "var(--accent)", letterSpacing: "0.1em", marginBottom: "0.3rem" }}>PURCHASES</div>
         <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.3rem", fontWeight: 700, letterSpacing: "-0.02em", marginBottom: "1.25rem" }}>Recent Orders</h2>
         {ORDERS.map((o, i) => (
@@ -510,10 +564,10 @@ function OrdersAndMessages() {
 function ActivityFeed() {
   const [saved, setSaved] = useState<Record<number, boolean>>({});
   return (
-    <div className="rv" style={{ ...card, padding: "1.75rem", marginBottom: "1.5rem" }}>
+    <div className="rv card-pad" style={{ ...card, padding: "1.75rem", marginBottom: "1.5rem" }}>
       <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "var(--accent)", letterSpacing: "0.1em", marginBottom: "0.3rem" }}>FOLLOWING</div>
       <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.4rem", fontWeight: 700, letterSpacing: "-0.02em", marginBottom: "1.25rem" }}>Activity Feed</h2>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
+      <div className="four-col-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
         {FEED.map((f, i) => (
           <div
             key={i}
@@ -571,7 +625,7 @@ function Recommended() {
           See all →
         </button>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
+      <div className="four-col-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
         {RECOMMENDED.map((item, i) => (
           <div key={i} className="rv-s" data-d={i * 80} style={{ cursor: "pointer" }}>
             <div
@@ -601,10 +655,10 @@ function Recommended() {
 /* ─── Impact Tracker ─── */
 function ImpactTracker() {
   return (
-    <div className="rv" style={{ ...card, background: "linear-gradient(135deg,#0a1a0a,#121a08)", border: "1px solid rgba(138,223,122,0.15)", padding: "1.75rem", marginBottom: "1.5rem" }}>
+    <div className="rv card-pad" style={{ ...card, background: "linear-gradient(135deg,#0a1a0a,#121a08)", border: "1px solid rgba(138,223,122,0.15)", padding: "1.75rem", marginBottom: "1.5rem" }}>
       <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "var(--accent)", letterSpacing: "0.1em", marginBottom: "0.3rem" }}>SUSTAINABILITY</div>
       <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.4rem", fontWeight: 700, letterSpacing: "-0.02em", marginBottom: "1.5rem" }}>Your Impact</h2>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
+      <div className="four-col-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
         {[
           { label: "CO₂ Prevented", value: IMPACT.co2, unit: "kg", icon: "🌿", desc: "Carbon kept out of the atmosphere" },
           { label: "Water Saved", value: IMPACT.water, unit: "L", icon: "💧", desc: "Litres vs. producing new clothing" },
@@ -658,9 +712,9 @@ function TrendingAndCommunity() {
   ];
   const [follows, setFollows] = useState<Record<number, boolean>>({ 1: true });
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem", marginBottom: "1.5rem" }}>
+    <div className="two-col-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem", marginBottom: "1.5rem" }}>
       {/* Trending */}
-      <div className="rv-l" style={{ ...card, padding: "1.75rem" }}>
+      <div className="rv-l card-pad" style={{ ...card, padding: "1.75rem" }}>
         <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "var(--accent)", letterSpacing: "0.1em", marginBottom: "0.3rem" }}>RIGHT NOW</div>
         <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.3rem", fontWeight: 700, letterSpacing: "-0.02em", marginBottom: "1.25rem" }}>Trending Styles</h2>
         {trending.map((t, i) => (
@@ -723,7 +777,7 @@ function TrendingAndCommunity() {
 function SellPrompt() {
   return (
     <div
-      className="rv"
+      className="rv sell-prompt-container"
       style={{
         borderRadius: "18px",
         overflow: "hidden",
@@ -741,7 +795,7 @@ function SellPrompt() {
         style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.3 }}
       />
       <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(10,10,8,0.95) 0%, rgba(10,10,8,0.4) 100%)" }} />
-      <div style={{ position: "relative", padding: "0 2.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+      <div className="sell-prompt-inner" style={{ position: "relative", padding: "0 2.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
         <div>
           <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.7rem", color: "var(--accent)", letterSpacing: "0.1em", marginBottom: "0.5rem" }}>CLEAR YOUR CLOSET</div>
           <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.8rem", fontWeight: 900, letterSpacing: "-0.03em", lineHeight: 1.1 }}>
@@ -752,6 +806,7 @@ function SellPrompt() {
           </p>
         </div>
         <button
+          className="sell-prompt-btn"
           style={{ flexShrink: 0, background: "var(--accent)", color: "#0a0a08", border: "none", padding: "0.85rem 2rem", borderRadius: "100px", fontSize: "0.95rem", fontWeight: 700, cursor: "pointer", fontFamily: "var(--font-body)", transition: "transform 0.25s ease, box-shadow 0.25s ease" }}
           onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.05)"; e.currentTarget.style.boxShadow = "0 16px 40px rgba(138,223,122,0.3)"; }}
           onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = "none"; }}
@@ -841,16 +896,17 @@ function MiniImpact() {
 ======================================================== */
 export default function App() {
   const [active, setActive] = useState("home");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   useReveal();
 
   return (
     <div style={{ display: "flex", minHeight: "100vh", background: "var(--bg)", color: "var(--fg)" }}>
-      <Sidebar active={active} setActive={setActive} />
+      <Sidebar active={active} setActive={setActive} open={sidebarOpen} setOpen={setSidebarOpen} />
       <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
-        <TopBar />
-        <main style={{ flex: 1, padding: "2rem 2rem 3rem", overflowY: "auto" }}>
+        <TopBar onToggleSidebar={() => setSidebarOpen((o) => !o)} />
+        <main className="home-main-pad" style={{ flex: 1, padding: "2rem 2rem 3rem", overflowY: "auto" }}>
           {/* Three-column layout: main content + right rail */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 240px", gap: "1.5rem", maxWidth: 1280, margin: "0 auto" }}>
+          <div className="home-layout-grid" style={{ display: "grid", gridTemplateColumns: "1fr 240px", gap: "1.5rem", maxWidth: 1280, margin: "0 auto" }}>
             {/* ── Main column ── */}
             <div>
               <WelcomeBanner />
@@ -864,7 +920,7 @@ export default function App() {
               <SellPrompt />
             </div>
             {/* ── Right rail ── */}
-            <div style={{ position: "sticky", top: 88, height: "fit-content", display: "flex", flexDirection: "column", gap: "1rem" }}>
+            <div className="home-right-rail" style={{ position: "sticky", top: 88, height: "fit-content", display: "flex", flexDirection: "column", gap: "1rem" }}>
               <ProfileCard />
               <QuickActions />
               <MiniImpact />

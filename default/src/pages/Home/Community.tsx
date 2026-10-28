@@ -1,15 +1,18 @@
+import { useState, useEffect } from "react";
+import { apiRequest } from "../../services/api";
+
 const testimonials = [
   {
     name: "Harsha Shetty",
     handle: "@ariawears",
-    text: "I've cleared out my entire winter wardrobe and made ₹380. The whole process was so smooth — FashionCycle is genuinely changing how I think about clothes.",
+    text: "I've cleared out my entire winter wardrobe and made 380₹. The whole process was so smooth — FashionCycle is genuinely changing how I think about clothes.",
     avatar: "AC",
     items: 14,
   },
   {
     name: "Rohit Kapoor",
     handle: "@rohitk",
-    text: "Found a Comme des Garçons jacket here for ₹90. That's not possible anywhere else. This platform attracts people who actually care about fashion.",
+    text: "Found a Comme des Garçons jacket here for 90₹. That's not possible anywhere else. This platform attracts people who actually care about fashion.",
     avatar: "RK",
     items: 8,
   },
@@ -23,8 +26,22 @@ const testimonials = [
 ];
 
 export default function Community() {
+  const [posts, setPosts] = useState(testimonials);
+
+  useEffect(() => {
+    apiRequest<typeof testimonials>("/community")
+      .then((res) => {
+        if (Array.isArray(res) && res.length > 0) {
+          setPosts(res);
+        }
+      })
+      .catch((err) => {
+        console.warn("MongoDB community voices fetch notice:", err);
+      });
+  }, []);
+
   return (
-    <section id="community" style={{ padding: "8rem 4rem", background: "#0d0d0b" }}>
+    <section id="community" className="section-pad" style={{ padding: "8rem 4rem", background: "#0d0d0b" }}>
       <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: "4rem" }}>
           <div
@@ -55,8 +72,8 @@ export default function Community() {
           </h2>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1.5rem" }}>
-          {testimonials.map((t, i) => (
+        <div className="categories-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1.5rem" }}>
+          {posts.map((t, i) => (
             <div
               key={t.name}
               className="reveal"

@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+
 const cats = [
   {
     label: "Tops & Tees",
@@ -22,8 +24,10 @@ const cats = [
 ];
 
 export default function Categories() {
+  const navigate = useNavigate();
+
   return (
-    <section style={{ padding: "8rem 4rem", background: "var(--bg)" }}>
+    <section className="section-pad" style={{ padding: "8rem 4rem", background: "var(--bg)" }}>
       <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
         <div className="reveal" style={{ marginBottom: "3rem" }}>
           <div
@@ -50,12 +54,13 @@ export default function Categories() {
           </h2>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
+        <div className="two-col-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
           {cats.map((cat, i) => (
             <div
               key={cat.label}
               className={i % 2 === 0 ? "reveal-left" : "reveal-right"}
               data-delay={i * 100}
+              onClick={() => navigate(`/shop?category=${encodeURIComponent(cat.label)}`)}
               style={{
                 position: "relative",
                 height: "280px",
@@ -67,10 +72,14 @@ export default function Categories() {
               onMouseEnter={(e) => {
                 const img = e.currentTarget.querySelector("img") as HTMLImageElement;
                 if (img) img.style.transform = "scale(1.1)";
+                const border = e.currentTarget.querySelector(".cat-border") as HTMLElement;
+                if (border) border.style.borderColor = "var(--accent)";
               }}
               onMouseLeave={(e) => {
                 const img = e.currentTarget.querySelector("img") as HTMLImageElement;
                 if (img) img.style.transform = "scale(1)";
+                const border = e.currentTarget.querySelector(".cat-border") as HTMLElement;
+                if (border) border.style.borderColor = "transparent";
               }}
             >
               <img
@@ -91,6 +100,17 @@ export default function Categories() {
                   background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%)",
                 }}
               />
+              <div
+                className="cat-border"
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  border: "2px solid transparent",
+                  borderRadius: "20px",
+                  transition: "border-color 0.3s ease",
+                  pointerEvents: "none",
+                }}
+              />
               <div style={{ position: "absolute", bottom: "1.5rem", left: "1.5rem" }}>
                 <div
                   style={{
@@ -107,11 +127,11 @@ export default function Categories() {
                   style={{
                     fontFamily: "var(--font-mono)",
                     fontSize: "0.7rem",
-                    color: "rgba(255,255,255,0.5)",
+                    color: "rgba(255,255,255,0.7)",
                     letterSpacing: "0.05em",
                   }}
                 >
-                  {cat.count} items
+                  {cat.count} items →
                 </div>
               </div>
             </div>

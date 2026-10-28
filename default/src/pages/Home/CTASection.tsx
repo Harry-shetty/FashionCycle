@@ -1,8 +1,12 @@
 import { Link } from "react-router-dom";
+import { useStore } from "../../contexts/StoreContext";
 
 export default function CTASection() {
+  const { openNewListingModal } = useStore();
+
   return (
     <section
+      className="section-pad"
       style={{
         padding: "8rem 4rem",
         background: "var(--bg)",
@@ -70,8 +74,8 @@ export default function CTASection() {
             marginBottom: "3rem",
           }}
         >
-          Start your FashionCycle journey today. List your first item in under
-          5 minutes, no experience required.
+          Start your FashionCycle journey today. List your first piece in under
+          2 minutes, zero fees, 100% circular impact.
         </p>
         <div
           className="reveal"
@@ -79,12 +83,12 @@ export default function CTASection() {
           style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}
         >
           <Link
-            to="/register"
+            to="/shop"
             style={{
               background: "var(--accent)",
               color: "#0a0a08",
               border: "none",
-              padding: "1.1rem 2.75rem",
+              padding: "1.1rem 2.5rem",
               borderRadius: "100px",
               fontSize: "1.05rem",
               fontWeight: 700,
@@ -103,8 +107,35 @@ export default function CTASection() {
               e.currentTarget.style.boxShadow = "none";
             }}
           >
-            Get Started Free →
+            Explore Marketplace →
           </Link>
+
+          <button
+            onClick={openNewListingModal}
+            style={{
+              background: "transparent",
+              color: "var(--fg)",
+              border: "1px solid var(--border)",
+              padding: "1.1rem 2.2rem",
+              borderRadius: "100px",
+              fontSize: "1.05rem",
+              fontWeight: 600,
+              cursor: "pointer",
+              fontFamily: "var(--font-body)",
+              display: "inline-block",
+              transition: "border-color 0.2s ease, transform 0.2s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = "var(--accent)";
+              e.currentTarget.style.transform = "translateY(-3px)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "var(--border)";
+              e.currentTarget.style.transform = "translateY(0)";
+            }}
+          >
+            + List Your First Piece
+          </button>
         </div>
       </div>
     </section>

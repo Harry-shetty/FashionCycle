@@ -1,4 +1,4 @@
-import { createBrowserRouter, type RouteObject } from "react-router-dom";
+import { createBrowserRouter, Navigate, type RouteObject } from "react-router-dom";
 
 import RootLayout from "../layouts/RootLayout";
 import AuthLayout from "../layouts/AuthLayout";
@@ -12,20 +12,19 @@ import RegisterPage from "../pages/Register";
 import ProfilePage from "../pages/Profile";
 import ListingsPage from "../pages/Listings";
 import OrdersPage from "../pages/Orders";
-import MessagesPage from "../pages/Messages";
+import LeaderboardPage from "../pages/Leaderboard";
 import ImpactPage from "../pages/Impact";
 import NotFoundPage from "../pages/NotFound";
 
 const routes: RouteObject[] = [
   {
-    // Public shell — Navbar + Footer visible to everyone
+    // Public shell — Marquee + Navbar + Footer visible
     element: <RootLayout />,
     children: [
-      // ① Default page: shown first to every visitor
       { index: true, element: <LandingPage /> },
       { path: "shop", element: <ShopPage /> },
+      { path: "impact", element: <ImpactPage /> },
       {
-        // Authenticated home dashboard
         path: "home",
         element: (
           <ProtectedRoute>
@@ -58,34 +57,21 @@ const routes: RouteObject[] = [
         ),
       },
       {
-        path: "messages",
+        path: "leaderboard",
         element: (
           <ProtectedRoute>
-            <MessagesPage />
+            <LeaderboardPage />
           </ProtectedRoute>
         ),
       },
       {
-        path: "impact",
-        element: (
-          <ProtectedRoute>
-            <ImpactPage />
-          </ProtectedRoute>
-        ),
+        path: "messages",
+        element: <Navigate to="/leaderboard" replace />,
       },
     ],
   },
   {
-    // Authenticated home dashboard (has its own sidebar/topbar)
-    path: "home",
-    element: (
-      <ProtectedRoute>
-        <HomePage />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    // Auth pages — minimal chrome, no Navbar
+    // Auth pages — clean layout
     element: <AuthLayout />,
     children: [
       { path: "login", element: <LoginPage /> },

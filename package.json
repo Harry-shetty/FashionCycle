@@ -1,14 +1,15 @@
 {
   "name": "FashionCycle",
   "version": "1.0.0",
-  "description": "",
+  "description": "Circular Fashion Platform with Firebase Auth & MongoDB Database",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "pnpm --prefix default dev",
+    "server": "node server/src/index.js",
+    "client": "pnpm --prefix default dev",
+    "dev": "node server/src/index.js & pnpm --prefix default dev",
     "build": "pnpm --prefix default build"
   },
-  "keywords": [],
+  "keywords": ["circular-fashion", "mongodb", "firebase"],
   "author": "",
   "license": "ISC"
 }

@@ -136,3 +136,129 @@ body {
 .hero-bg-img {
   animation: scaleIn 1.4s cubic-bezier(0.16,1,0.3,1) forwards;
 }
+
+/* ─────────────────────────────────────────────────────────────
+   RESPONSIVE OVERRIDES FOR HOME APP
+───────────────────────────────────────────────────────────── */
+html, body, #root {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+  width: 100%;
+}
+
+.home-mobile-toggle {
+  display: none;
+}
+
+.home-sidebar-backdrop {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .home-sidebar {
+    position: fixed !important;
+    left: -260px !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    z-index: 100 !important;
+    transition: left 0.3s ease !important;
+    box-shadow: 0 0 40px rgba(0,0,0,0.8) !important;
+  }
+  .home-sidebar.open {
+    left: 0 !important;
+  }
+  .home-sidebar-backdrop.open {
+    display: block !important;
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(0,0,0,0.6) !important;
+    z-index: 99 !important;
+  }
+  .home-mobile-toggle {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: rgba(255,255,255,0.06) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 8px !important;
+    color: var(--fg) !important;
+    padding: 0.4rem 0.65rem !important;
+    font-size: 1.1rem !important;
+    cursor: pointer !important;
+  }
+  .home-layout-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .home-right-rail {
+    position: static !important;
+    margin-top: 1.5rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-main-pad {
+    padding: 1rem 0.75rem 3rem !important;
+  }
+  .stats-grid-4 {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem !important;
+  }
+  .stat-card-item {
+    padding: 1.15rem 0.85rem !important;
+  }
+  .two-col-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+  .four-col-grid {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)) !important;
+    gap: 0.75rem !important;
+  }
+  .welcome-banner-content {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    padding: 1.5rem 1rem !important;
+    gap: 1.25rem !important;
+  }
+  .welcome-stats-row {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important;
+    gap: 0.65rem !important;
+  }
+  .welcome-stat-pill {
+    min-width: 0 !important;
+    width: 100% !important;
+    padding: 0.65rem 0.5rem !important;
+  }
+  .card-pad {
+    padding: 1.25rem 1rem !important;
+  }
+  .sell-prompt-container {
+    height: auto !important;
+    padding: 1.75rem 1.25rem !important;
+  }
+  .sell-prompt-inner {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 1.25rem !important;
+    padding: 0 !important;
+  }
+  .sell-prompt-btn {
+    width: 100% !important;
+    text-align: center !important;
+  }
+}
+
+@media (max-width: 520px) {
+  .stats-grid-4 {
+    grid-template-columns: 1fr !important;
+  }
+  .four-col-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .welcome-stats-row {
+    grid-template-columns: 1fr !important;
+  }
+}
+

@@ -8,7 +8,7 @@ const items = [
   "♻ ZERO WASTE FASHION",
   "✦ EARN WHILE YOU CLEAR YOUR CLOSET",
 ];
-const doubled = [...items, ...items];
+const repeatedItems = [...items, ...items, ...items, ...items];
 
 export default function Marquee() {
   return (
@@ -28,9 +28,9 @@ export default function Marquee() {
       }}
     >
       <div className="marquee-track">
-        {doubled.map((item, i) => (
+        {repeatedItems.map((item, i) => (
           <span
-            key={i}
+            key={`${item}-${i}`}
             style={{
               fontFamily: "var(--font-mono)",
               fontSize: "0.75rem",

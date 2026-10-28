@@ -1,9 +1,11 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import { useStore } from "../../contexts/StoreContext";
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { login, loginAsDemo } = useAuth();
+  const { showToast } = useStore();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("harsha@gmail.com");
@@ -17,12 +19,19 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await login({ email, password });
+      showToast("Signed in successfully! Welcome back 🌿");
       navigate("/home");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {
       setLoading(false);
     }
+  }
+
+  function handleDemoAccess() {
+    loginAsDemo("Sophia Laurent");
+    showToast("Signed in as Demo User (Sophia Laurent) 🚀");
+    navigate("/home");
   }
 
   const inputStyle = {
@@ -70,6 +79,53 @@ export default function LoginPage() {
         >
           Sign in to your FashionCycle account
         </p>
+      </div>
+
+      {/* 1-Click Demo Login Button */}
+      <button
+        type="button"
+        onClick={handleDemoAccess}
+        style={{
+          width: "100%",
+          background: "rgba(138,223,122,0.12)",
+          border: "1px solid var(--accent)",
+          color: "var(--accent)",
+          borderRadius: "100px",
+          padding: "0.85rem",
+          fontSize: "0.95rem",
+          fontWeight: 700,
+          fontFamily: "var(--font-body)",
+          cursor: "pointer",
+          marginBottom: "1.5rem",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "0.5rem",
+          transition: "transform 0.2s, background 0.2s",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = "scale(1.02)";
+          e.currentTarget.style.background = "rgba(138,223,122,0.2)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = "scale(1)";
+          e.currentTarget.style.background = "rgba(138,223,122,0.12)";
+        }}
+      >
+        <span>⚡</span> Quick Demo Sign-in (1-Click)
+      </button>
+
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "1rem",
+          marginBottom: "1.5rem",
+        }}
+      >
+        <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
+        <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "var(--muted)" }}>OR SIGN IN WITH EMAIL</span>
+        <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
       </div>
 
       <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>

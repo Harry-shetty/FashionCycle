@@ -21,9 +21,10 @@ export default function HowItWorks() {
   ];
 
   return (
-    <section id="how-it-works" style={{ padding: "8rem 4rem", background: "var(--bg)" }}>
+    <section id="how-it-works" className="section-pad" style={{ padding: "8rem 4rem", background: "var(--bg)" }}>
       <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
         <div
+          className="two-col-grid"
           style={{
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
@@ -74,7 +75,7 @@ export default function HowItWorks() {
           </p>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "2rem" }}>
+        <div className="categories-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "2rem" }}>
           {steps.map((step, i) => (
             <div
               key={step.number}

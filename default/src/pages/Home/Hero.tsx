@@ -4,8 +4,9 @@ export default function Hero() {
   return (
     <section
       id="hero"
+      className="hero-grid"
       style={{
-        minHeight: "100vh",
+        minHeight: "calc(100vh - 100px)",
         display: "grid",
         gridTemplateColumns: "1fr 1fr",
         position: "relative",
@@ -14,11 +15,12 @@ export default function Hero() {
     >
       {/* Left content */}
       <div
+        className="hero-pad"
         style={{
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
-          padding: "4rem 4rem 5rem",
+          padding: "clamp(3rem, 6vw, 5rem) clamp(1.25rem, 4vw, 4rem)",
           position: "relative",
           zIndex: 2,
         }}
@@ -98,7 +100,7 @@ export default function Hero() {
           }}
         >
           <Link
-            to="/register"
+            to="/shop"
             style={{
               background: "var(--accent)",
               color: "#0a0a08",
@@ -193,7 +195,7 @@ export default function Hero() {
       </div>
 
       {/* Right image panel */}
-      <div style={{ position: "relative", overflow: "hidden" }}>
+      <div className="hero-right-col" style={{ position: "relative", overflow: "hidden" }}>
         <img
           src="https://images.unsplash.com/photo-1613915617430-8ab0fd7c6baf?w=900&h=1200&fit=crop&auto=format"
           alt="Fashion model in editorial look"

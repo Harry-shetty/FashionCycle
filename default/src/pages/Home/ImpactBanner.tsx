@@ -9,6 +9,7 @@ export default function ImpactBanner() {
   return (
     <section
       id="impact"
+      className="section-pad"
       style={{
         padding: "8rem 4rem",
         background: "var(--accent)",
@@ -53,7 +54,7 @@ export default function ImpactBanner() {
           </h2>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "2rem" }}>
+        <div className="stats-grid-4" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "2rem" }}>
           {stats.map((s, i) => (
             <div
               key={s.unit}
