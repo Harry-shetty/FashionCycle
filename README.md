@@ -58,9 +58,9 @@
 ## 🏛️ System Architecture
 
 ```mermaid
-graph TD
+flowchart TD
     subgraph Client ["Client Tier (React 19 + TypeScript + Vite)"]
-        UI["Modern Dark Eco UI & Custom Keyframe Engine"]
+        UI["Modern Dark Eco UI & Keyframe Engine"]
         Store["StoreContext (Global State & Sync)"]
         AuthCtx["AuthContext (Firebase & Demo Login)"]
         SocketClient["Socket.IO Client (Real-time duplex)"]
@@ -80,12 +80,12 @@ graph TD
 
     UI --> Store
     UI --> AuthCtx
-    Store <-->|REST Requests| App
-    SocketClient <-->|WebSockets (Port 5001)| WSServer
-    Store <-->|Multimodal Payloads| Gemini
-    AuthCtx <-->|OAuth / Email Tokens| Firebase
+    Store <-->|"REST API Requests"| App
+    SocketClient <-->|"WebSockets on Port 5001"| WSServer
+    Store <-->|"Multimodal Payloads"| Gemini
+    AuthCtx <-->|"OAuth and Email Tokens"| Firebase
     App <--> Mongoose
-    Mongoose <-->|Atlas SRV Connection| Atlas
+    Mongoose <-->|"Atlas SRV Connection"| Atlas
 ```
 
 ---
