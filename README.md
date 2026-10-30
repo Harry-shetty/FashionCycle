@@ -49,7 +49,7 @@
 * **Responsive Layout**: Fluid table layout with a dedicated compact mobile impact summary column.
 
 ### 🍃 Complete MongoDB Atlas Collections Management
-* **10 Mongoose Collections**: `listings`, `orders`, `chatmessages`, `conversations`, `saveditems`, `impacts`, `notifications`, `leaderboards`, `communityposts`, `newsletters`.
+* **9 Mongoose Collections**: `listings`, `orders`, `chatmessages`, `saveditems`, `impacts`, `notifications`, `leaderboards`, `communityposts`, `newsletters`.
 * **Profile Database Control Panel**: Live document counters with one-click **+ Seed / Create** and **✕ Drop Collection** actions for granular database testing.
 * **Resilient Connection**: Non-blocking auto-reconnect logic ensuring zero downtime during cloud latency spikes.
 
@@ -116,7 +116,7 @@ FashionCycle/
 ├── server/                         # Backend Application (Express + Mongoose + Socket.IO)
 │   ├── src/
 │   │   ├── config/                 # db.js (MongoDB Atlas connection with auto-reconnect)
-│   │   ├── models/                 # 10 Mongoose schemas (Listing, Order, ChatMessage, etc.)
+│   │   ├── models/                 # 9 Mongoose schemas (Listing, Order, ChatMessage, etc.)
 │   │   ├── routes/                 # REST endpoints (listings, orders, chatbot, database, etc.)
 │   │   ├── seed.js                 # Automatic seed script for fresh deployment
 │   │   └── index.js                # Express & Socket.IO server entry point

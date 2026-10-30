@@ -9,7 +9,6 @@ import { seedDatabase } from "./seed.js";
 
 import listingsRoutes from "./routes/listings.js";
 import ordersRoutes from "./routes/orders.js";
-import conversationsRoutes from "./routes/conversations.js";
 import savedRoutes from "./routes/saved.js";
 import impactRoutes from "./routes/impact.js";
 import notificationsRoutes from "./routes/notifications.js";
@@ -43,7 +42,6 @@ app.use(express.json());
 // Routes
 app.use("/api/listings", listingsRoutes);
 app.use("/api/orders", ordersRoutes);
-app.use("/api/conversations", conversationsRoutes);
 app.use("/api/saved", savedRoutes);
 app.use("/api/impact", impactRoutes);
 app.use("/api/notifications", notificationsRoutes);
@@ -63,8 +61,6 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-import { Conversation } from "./models/Conversation.js";
-
 // Socket.IO active connections tracker
 const activeSockets = new Set();
 
@@ -74,7 +70,7 @@ io.on("connection", (socket) => {
   io.emit("users_online", { count: activeSockets.size });
   console.log(`⚡ Socket.IO client connected: ${socket.id} (Total: ${activeSockets.size})`);
 
-  // Join / Leave conversation rooms
+  // Join / Leave rooms
   socket.on("join_conversation", (conversationId) => {
     socket.join(conversationId);
   });
@@ -83,128 +79,57 @@ io.on("connection", (socket) => {
     socket.leave(conversationId);
   });
 
-  // Direct real-time message sending via Socket.IO
-  socket.on("send_message", async ({ conversationId, text, sender = "me" }, callback) => {
-    try {
-      const convo = await Conversation.findOne({ id: conversationId });
-      if (!convo) {
-        if (callback) callback({ error: "Conversation not found" });
-        return;
-      }
+  // Ephemeral real-time messaging via Socket.IO
+  socket.on("send_message", ({ conversationId, text, sender = "me" }, callback) => {
+    const now = new Date();
+    const timeFormatted = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
-      const now = new Date();
-      const timeFormatted = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const newMsg = {
+      id: `msg-${Date.now()}`,
+      sender,
+      text,
+      time: timeFormatted,
+      reaction: "",
+      createdAt: now,
+    };
 
-      const newMsg = {
-        id: `msg-${Date.now()}`,
-        sender,
-        text,
-        time: timeFormatted,
-        reaction: "",
-        createdAt: now,
-      };
+    io.emit("message_received", { conversationId, message: newMsg });
+    if (callback) callback({ success: true, message: newMsg });
 
-      convo.messages.push(newMsg);
-      convo.time = "Just now";
-      convo.unread = false;
-      await convo.save();
+    // Optional quick auto-reply simulation
+    if (sender === "me") {
+      setTimeout(() => {
+        io.emit("user_typing", { conversationId, handle: "@seller", isTyping: true });
+      }, 400);
 
-      io.emit("message_received", { conversationId, message: newMsg });
-      io.emit("conversation_updated", convo);
-
-      if (callback) callback({ success: true, message: newMsg });
-
-      // Intelligent seller reply scheduled over Socket.IO
-      if (sender === "me") {
-        setTimeout(() => {
-          io.emit("user_typing", { conversationId, handle: convo.handle, isTyping: true });
-        }, 400);
-
-        setTimeout(async () => {
-          try {
-            const lower = text.toLowerCase();
-            let reply = "Thanks for the message! Let me know if you need any extra details or measurements 🌿";
-            if (lower.includes("available")) {
-              reply = "Yes, absolutely! It's still available, carefully stored, and ready to ship ✨";
-            } else if (lower.includes("₹") || lower.includes("price") || lower.includes("offer") || lower.includes("do")) {
-              reply = "That offer sounds very reasonable! Send the official price offer and I'll accept right away 🤝";
-            } else if (lower.includes("ship") || lower.includes("tomorrow") || lower.includes("courier")) {
-              reply = "Yes! If you place the order today, I'll drop it off at our zero-emission hub by 11 AM tomorrow 📦";
-            } else if (lower.includes("photo") || lower.includes("close")) {
-              reply = "Just uploaded high-res closeups of the fabric tags, lining, and craftsmanship ✨";
-            } else if (lower.includes("authentic") || lower.includes("real")) {
-              reply = "100% certified authentic! Accompanied by our circular blockchain authenticity verification 🌱";
-            } else if (lower.includes("voice note")) {
-              reply = "Heard your voice note loud and clear! Sounds great, let's proceed 🙌";
-            }
-
-            const currentConvo = await Conversation.findOne({ id: conversationId });
-            if (currentConvo) {
-              const replyNow = new Date();
-              const replyTimeFormatted = replyNow.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-              const sellerMsg = {
-                id: `msg-rep-${Date.now()}`,
-                sender: "them",
-                text: reply,
-                time: replyTimeFormatted,
-                reaction: "",
-                createdAt: replyNow,
-              };
-
-              currentConvo.messages.push(sellerMsg);
-              currentConvo.time = "Just now";
-              await currentConvo.save();
-
-              io.emit("user_typing", { conversationId, handle: currentConvo.handle, isTyping: false });
-              io.emit("message_received", { conversationId, message: sellerMsg });
-              io.emit("conversation_updated", currentConvo);
-            }
-          } catch (e) {
-            console.error("Socket seller reply error:", e);
-          }
-        }, 1400);
-      }
-    } catch (err) {
-      console.error("Socket send_message error:", err);
-      if (callback) callback({ error: err.message });
+      setTimeout(() => {
+        const replyNow = new Date();
+        const sellerMsg = {
+          id: `msg-rep-${Date.now()}`,
+          sender: "them",
+          text: "Thanks for reaching out! The item is in great condition and ready to ship 🌿",
+          time: replyNow.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          reaction: "",
+          createdAt: replyNow,
+        };
+        io.emit("user_typing", { conversationId, handle: "@seller", isTyping: false });
+        io.emit("message_received", { conversationId, message: sellerMsg });
+      }, 1400);
     }
   });
 
   // Real-time message reactions
-  socket.on("message_reaction", async ({ conversationId, messageId, emoji }) => {
-    try {
-      const convo = await Conversation.findOne({ id: conversationId });
-      if (convo) {
-        const msg = convo.messages.find((m) => m.id === messageId);
-        if (msg) {
-          msg.reaction = msg.reaction === emoji ? "" : emoji;
-          await convo.save();
-          io.emit("message_reaction_updated", {
-            conversationId,
-            messageId,
-            emoji: msg.reaction,
-          });
-        }
-      }
-    } catch (err) {
-      console.error("Socket reaction error:", err);
-    }
+  socket.on("message_reaction", ({ conversationId, messageId, emoji }) => {
+    io.emit("message_reaction_updated", {
+      conversationId,
+      messageId,
+      emoji,
+    });
   });
 
   // Mark conversation as read
-  socket.on("mark_read", async ({ conversationId }) => {
-    try {
-      const updated = await Conversation.findOneAndUpdate(
-        { id: conversationId },
-        { unread: false },
-        { new: true }
-      );
-      if (updated) {
-        io.emit("conversation_read", { conversationId });
-      }
-    } catch (err) {
-      console.error("Socket mark_read error:", err);
-    }
+  socket.on("mark_read", ({ conversationId }) => {
+    io.emit("conversation_read", { conversationId });
   });
 
   // Real-time typing indicators

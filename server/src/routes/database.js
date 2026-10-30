@@ -2,7 +2,6 @@ import express from "express";
 import mongoose from "mongoose";
 import { Listing } from "../models/Listing.js";
 import { Order } from "../models/Order.js";
-import { Conversation } from "../models/Conversation.js";
 import { SavedItem } from "../models/SavedItem.js";
 import { Impact } from "../models/Impact.js";
 import { Notification } from "../models/Notification.js";
@@ -18,7 +17,6 @@ const router = express.Router();
 const MODEL_MAP = {
   listings: Listing,
   orders: Order,
-  conversations: Conversation,
   saveditems: SavedItem,
   impacts: Impact,
   notifications: Notification,

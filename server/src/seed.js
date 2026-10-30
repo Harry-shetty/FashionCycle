@@ -1,6 +1,6 @@
+import mongoose from "mongoose";
 import { Listing } from "./models/Listing.js";
 import { Order } from "./models/Order.js";
-import { Conversation } from "./models/Conversation.js";
 import { SavedItem } from "./models/SavedItem.js";
 import { Impact } from "./models/Impact.js";
 import { Notification } from "./models/Notification.js";
@@ -172,64 +172,6 @@ const SEED_ORDERS = [
   },
 ];
 
-const SEED_CONVERSATIONS = [
-  {
-    id: "conv-1",
-    name: "Elena M.",
-    handle: "@elenam",
-    avatar: "EM",
-    unread: true,
-    time: "5m",
-    itemContext: "Vintage Ralph Lauren Wool Blazer",
-    messages: [
-      { id: "m1", sender: "them", text: "Hi! Is the Ralph Lauren blazer still available?", time: "10:15 AM" },
-      { id: "m2", sender: "me", text: "Yes it is! Packed and ready to ship.", time: "10:18 AM" },
-      { id: "m3", sender: "them", text: "Is the blazer still available? Happy to pay asking price!", time: "10:20 AM" },
-    ],
-  },
-  {
-    id: "conv-2",
-    name: "Tom S.",
-    handle: "@tomstyle",
-    avatar: "TS",
-    unread: true,
-    time: "1h",
-    itemContext: "Acne Studios Canada Wool Scarf",
-    messages: [
-      { id: "m1", sender: "them", text: "Could you do ₹70 for the scarf? Love the colour!", time: "09:30 AM" },
-      { id: "m2", sender: "me", text: "Could we meet in the middle at ₹74? It has zero flaws.", time: "09:45 AM" },
-      { id: "m3", sender: "them", text: "Deal! Let me send the offer now.", time: "09:48 AM" },
-    ],
-  },
-  {
-    id: "conv-3",
-    name: "Priya Nair",
-    handle: "@priyaon",
-    avatar: "PN",
-    unread: false,
-    time: "3h",
-    itemContext: "Mulberry Silk Wrap Dress",
-    messages: [
-      { id: "m1", sender: "them", text: "Package arrived safely! Fits like a dream.", time: "Yesterday" },
-      { id: "m2", sender: "me", text: "So happy to hear that Priya! Enjoy wearing it!", time: "Yesterday" },
-      { id: "m3", sender: "them", text: "Thank you for the fast shipping! 5 stars ✨", time: "8:00 AM" },
-    ],
-  },
-  {
-    id: "conv-4",
-    name: "Jake W.",
-    handle: "@jakew",
-    avatar: "JW",
-    unread: false,
-    time: "1d",
-    itemContext: "Filippa K Knit",
-    messages: [
-      { id: "m1", sender: "them", text: "Interested in swapping for a Filippa K item?", time: "2 days ago" },
-      { id: "m2", sender: "me", text: "Send over a photo, might be interested in outerwear!", time: "Yesterday" },
-    ],
-  },
-];
-
 const SEED_NOTIFICATIONS = [
   { id: "n1", icon: "💬", text: "Tom offered ₹74 for your Acne scarf", time: "5m ago", read: false },
   { id: "n2", icon: "❤️", text: "Elena liked your Ralph Lauren Blazer listing", time: "18m ago", read: false },
@@ -251,10 +193,15 @@ export async function seedDatabase() {
       console.log("🌱 Seeded initial orders into MongoDB");
     }
 
-    const convoCount = await Conversation.countDocuments();
-    if (convoCount === 0) {
-      await Conversation.insertMany(SEED_CONVERSATIONS);
-      console.log("🌱 Seeded initial conversations into MongoDB");
+    // Ensure collection 'conversations' is removed from MongoDB
+    try {
+      const collections = await mongoose.connection.db.listCollections({ name: "conversations" }).toArray();
+      if (collections.length > 0) {
+        await mongoose.connection.db.dropCollection("conversations");
+        console.log("🗑️ Collection 'conversations' dropped from database");
+      }
+    } catch {
+      // Ignore if collection does not exist
     }
 
     const savedCount = await SavedItem.countDocuments();

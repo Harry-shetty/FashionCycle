@@ -563,7 +563,6 @@ export default function ProfilePage() {
               { id: "listings", label: "Listings", desc: "Garments in marketplace", icon: "🏷️", defaultCount: listings.length },
               { id: "orders", label: "Orders", desc: "Eco deliveries & shipments", icon: "📦", defaultCount: orders.length },
               { id: "chatmessages", label: "Chat Messages", desc: "CycleBot AI conversation turns", icon: "💬", defaultCount: chatHistory.length },
-              { id: "conversations", label: "Conversations", desc: "Buyer & seller inbox chats", icon: "🤝", defaultCount: 3 },
               { id: "saveditems", label: "Saved Items", desc: "Wishlist products", icon: "❤️", defaultCount: 2 },
               { id: "impacts", label: "Impact Tracker", desc: "CO₂ & water conservation stats", icon: "🌿", defaultCount: 1 },
               { id: "notifications", label: "Notifications", desc: "Live system alerts", icon: "🔔", defaultCount: 4 },
