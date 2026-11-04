@@ -56,8 +56,9 @@ router.post("/", async (req, res) => {
 
     const numPrice = Number(price) || 50;
     const calcSavings = Number(savings) || Math.round(numPrice * 1.4);
-    const calcCo2 = Number(co2) || Number((Math.max(4.2, Math.round((numPrice * 0.05 + 3.8) * 10) / 10)).toFixed(1));
-    const calcWater = Number(water) || Math.round(numPrice * 8 + 450);
+    const garmentsPurchased = 1;
+    const calcCo2 = Number(co2) || Number(Math.max(0, (garmentsPurchased * 12 * 0.70) - (garmentsPurchased * 1)).toFixed(1));
+    const calcWater = Number(water) || Math.max(0, (garmentsPurchased * 2400 * 0.70) - (garmentsPurchased * 100));
 
     const newOrder = await Order.create({
       id: orderId,

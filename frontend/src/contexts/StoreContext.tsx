@@ -595,8 +595,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const placeOrder = async (item: { title: string; price: number; img: string; seller?: string }) => {
     const isHarsha = user?.email === "harsha@gmail.com" || user?.id === "usr-buyer-harsha";
     const savingsToAdd = Math.round(item.price * 1.4);
-    const co2ToAdd = Number((Math.max(4.2, Math.round((item.price * 0.05 + 3.8) * 10) / 10)).toFixed(1));
-    const waterToAdd = Math.round(item.price * 8 + 450);
+    
+    // Dynamic circular environmental impact formula
+    const garmentsPurchased = 1;
+    const waterToAdd = Math.max(0, (garmentsPurchased * 2400 * 0.70) - (garmentsPurchased * 100));
+    const co2ToAdd = Number(Math.max(0, (garmentsPurchased * 12 * 0.70) - (garmentsPurchased * 1)).toFixed(1));
 
     try {
       const created = await apiRequest<OrderItem>("/orders", {
