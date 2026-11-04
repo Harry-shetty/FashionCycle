@@ -94,7 +94,7 @@ flowchart TD
 
 ```bash
 FashionCycle/
-├── default/                        # Frontend Client Application (React 19 + Vite)
+├── frontend/                       # Frontend Client Application (React 19 + Vite + Tailwind)
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── layout/             # Navbar, Footer, Marquee, ScrollProgress
@@ -108,16 +108,18 @@ FashionCycle/
 │   │   │   ├── Orders/             # Live tracking & order history
 │   │   │   ├── Leaderboard/        # Monthly / All-Time / Local podium & rankings
 │   │   │   ├── Profile/            # Member dashboard & MongoDB Collection Manager
+│   │   │   ├── Community/          # Collector networks & Lookbooks
+│   │   │   ├── Wishlist/           # Saved archival pieces
 │   │   │   └── Impact/             # Carbon & water conservation metrics
-│   │   └── services/               # api.ts (HTTP client), gemini.ts (AI), socket.ts (WS)
+│   │   └── services/               # api.ts (HTTP client), firebase.ts (Auth), socket.ts (WS)
 │   ├── .env.example                # Frontend environment template
 │   └── package.json
 │
-├── server/                         # Backend Application (Express + Mongoose + Socket.IO)
+├── backend/                        # Backend Application (Express + Mongoose + Socket.IO)
 │   ├── src/
 │   │   ├── config/                 # db.js (MongoDB Atlas connection with auto-reconnect)
-│   │   ├── models/                 # 9 Mongoose schemas (Listing, Order, ChatMessage, etc.)
-│   │   ├── routes/                 # REST endpoints (listings, orders, chatbot, database, etc.)
+│   │   ├── models/                 # Buyer, Seller, Listing, Order, CommunityPost, etc.
+│   │   ├── routes/                 # REST endpoints (buyer, seller, listings, chatbot, etc.)
 │   │   ├── seed.js                 # Automatic seed script for fresh deployment
 │   │   └── index.js                # Express & Socket.IO server entry point
 │   ├── .env.example                # Backend environment template
@@ -146,9 +148,9 @@ cd FashionCycle
 
 ### 2. Configure Environment Variables
 
-**Backend (`server/.env`)**:
+**Backend (`backend/.env`)**:
 ```bash
-cp server/.env.example server/.env
+cp backend/.env.example backend/.env
 ```
 Fill in your configuration:
 ```env
@@ -156,9 +158,9 @@ PORT=5001
 MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/fashioncycle?retryWrites=true&w=majority
 ```
 
-**Frontend (`default/.env`)**:
+**Frontend (`frontend/.env`)**:
 ```bash
-cp default/.env.example default/.env
+cp frontend/.env.example frontend/.env
 ```
 Fill in your configuration:
 ```env
@@ -175,8 +177,8 @@ VITE_FIREBASE_PROJECT_ID=fashioncycle
 ```bash
 # Install root, backend, and frontend packages
 pnpm install
-pnpm --prefix default install
-pnpm --prefix server install
+pnpm --prefix frontend install
+pnpm --prefix backend install
 ```
 
 ---
