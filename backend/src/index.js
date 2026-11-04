@@ -56,7 +56,16 @@ app.use("/api/database", databaseRoutes);
 app.use("/api/seller", sellerRoutes);
 app.use("/api/buyer", buyerRoutes);
 
-// Health check
+// Root & Health check
+app.get("/", (req, res) => {
+  res.json({
+    name: "FashionCycle API",
+    status: "online",
+    message: "FashionCycle Express + MongoDB + Socket.IO Backend is running smoothly.",
+    health: "/api/health",
+  });
+});
+
 app.get("/api/health", (req, res) => {
   res.json({
     status: "healthy",
