@@ -35,7 +35,7 @@ interface BackendSavedItem {
 }
 
 export default function WishlistPage() {
-  const { isSeller } = useAuth();
+  const { isSeller, isAuthenticated, user } = useAuth();
 
   // Sellers do not have a buyer wishlist
   if (isSeller) {
@@ -115,6 +115,11 @@ export default function WishlistPage() {
 
   const handleInstantBuy = (e: React.MouseEvent, item: Listing) => {
     e.stopPropagation();
+    if (!isAuthenticated || !user) {
+      showToast("Please sign in or create an account to acquire this piece 🌱", "info");
+      navigate("/login", { state: { returnUrl: "/wishlist" } });
+      return;
+    }
     navigate("/payment", {
       state: {
         item: {

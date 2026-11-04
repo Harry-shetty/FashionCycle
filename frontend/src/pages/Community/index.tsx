@@ -229,7 +229,7 @@ const TOP_SELLERS: TopSeller[] = [
 export default function CommunityPage() {
   const navigate = useNavigate();
   const { listings, showToast, openNewListingModal } = useStore();
-  const { user, isSeller } = useAuth();
+  const { user, isSeller, isAuthenticated } = useAuth();
 
   // Seller active tab
   const [activeTab, setActiveTab] = useState<"account" | "stories">("account");
@@ -286,6 +286,12 @@ export default function CommunityPage() {
   }, []);
 
   const handleToggleFollow = (seller: SellerProfile) => {
+    if (!isAuthenticated || !user) {
+      showToast("Please sign in or create an account to follow curators 🌱", "info");
+      navigate("/login", { state: { returnUrl: "/community" } });
+      return;
+    }
+
     const isCurrentlyFollowing = !!followingMap[seller.id];
     const newFollowingState = !isCurrentlyFollowing;
 

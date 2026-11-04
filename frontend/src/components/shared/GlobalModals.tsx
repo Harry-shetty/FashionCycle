@@ -17,7 +17,7 @@ const CONDITIONS: Condition[] = ["Like New", "Excellent", "Good", "Fair"];
 
 export default function GlobalModals() {
   const navigate = useNavigate();
-  const { isSeller, isBuyer } = useAuth();
+  const { isSeller, isBuyer, isAuthenticated, user } = useAuth();
   const {
     isNewListingModalOpen,
     closeNewListingModal,
@@ -149,6 +149,12 @@ export default function GlobalModals() {
 
   const handleBuyNow = () => {
     if (!selectedItemForModal) return;
+    if (!isAuthenticated || !user) {
+      showToast("Please sign in or create an account to acquire this piece 🌱", "info");
+      closeItemModal();
+      navigate("/login", { state: { returnUrl: "/shop" } });
+      return;
+    }
     const piece = {
       id: selectedItemForModal.id,
       title: selectedItemForModal.title,
@@ -165,6 +171,12 @@ export default function GlobalModals() {
 
   const handleSendOffer = () => {
     if (!selectedItemForModal) return;
+    if (!isAuthenticated || !user) {
+      showToast("Please sign in to make an offer to the seller 🌱", "info");
+      closeItemModal();
+      navigate("/login", { state: { returnUrl: "/shop" } });
+      return;
+    }
     const amount = Number(offerAmount);
     if (!amount || amount <= 0) {
       showToast("Please enter a valid offer amount", "error");
@@ -178,6 +190,12 @@ export default function GlobalModals() {
 
   const handleInquirePiece = () => {
     if (!selectedItemForModal) return;
+    if (!isAuthenticated || !user) {
+      showToast("Please sign in to inquire with the seller 🌱", "info");
+      closeItemModal();
+      navigate("/login", { state: { returnUrl: "/shop" } });
+      return;
+    }
     showToast(`Inquiry sent for ${selectedItemForModal.title}! Seller has been notified.`);
     closeItemModal();
   };

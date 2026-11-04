@@ -23,15 +23,19 @@ const UPI_APPS = [
 ];
 
 export default function PaymentPage() {
-  const { user, isSeller } = useAuth();
+  const { user, isSeller, isAuthenticated } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Prompt login if user is not authenticated
+  if (!isAuthenticated || !user) {
+    return <Navigate to="/login" state={{ returnUrl: location.pathname }} replace />;
+  }
 
   // Sellers are strictly excluded from shop checkout & purchasing
   if (isSeller) {
     return <Navigate to="/listings" replace />;
   }
-
-  const location = useLocation();
-  const navigate = useNavigate();
   const { listings, placeOrder, showToast } = useStore();
 
   // Resolve item from navigation state or fallback to first active listing

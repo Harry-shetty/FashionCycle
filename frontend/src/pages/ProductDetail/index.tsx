@@ -41,7 +41,7 @@ export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { listings, placeOrder, savedIds, toggleSave, showToast } = useStore();
-  const { isSeller } = useAuth();
+  const { isSeller, isAuthenticated, user } = useAuth();
 
   const [item, setItem] = useState<Listing | null>(() => {
     return listings.find((l) => l.id === id) || null;
@@ -168,6 +168,12 @@ export default function ProductDetailPage() {
   const curator = CURATORS[Math.abs(item.id.split("").reduce((acc: number, c: string) => acc + c.charCodeAt(0), 0)) % CURATORS.length];
 
   const handleBuy = () => {
+    if (!isAuthenticated || !user) {
+      showToast("Please sign in or create an account to acquire this piece 🌱", "info");
+      navigate("/login", { state: { returnUrl: `/product/${item.id}` } });
+      return;
+    }
+
     navigate("/payment", {
       state: {
         item: {
@@ -185,6 +191,12 @@ export default function ProductDetailPage() {
   };
 
   const handleSendOffer = () => {
+    if (!isAuthenticated || !user) {
+      showToast("Please sign in to send an offer to the seller 🌱", "info");
+      navigate("/login", { state: { returnUrl: `/product/${item.id}` } });
+      return;
+    }
+
     if (!offerValue.trim() || Number(offerValue) <= 0) {
       showToast("Please enter a valid offer amount in ₹", "error");
       return;
@@ -877,6 +889,11 @@ export default function ProductDetailPage() {
           <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
             <button
               onClick={() => {
+                if (!isAuthenticated || !user) {
+                  showToast("Please sign in or create an account to follow curators 🌱", "info");
+                  navigate("/login", { state: { returnUrl: `/product/${item.id}` } });
+                  return;
+                }
                 const nextState = !isFollowingCurator;
                 setIsFollowingCurator(nextState);
                 showToast(nextState ? `Now following ${curator.name}! 🎉` : `Unfollowed ${curator.name}`, "info");
