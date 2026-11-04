@@ -91,7 +91,9 @@ router.post("/", async (req, res) => {
     // Broadcast real-time listing to all connected clients via Socket.IO
     const io = req.app.get("io");
     if (io) {
-      io.emit("listing_created", newListing);
+      const listingObj = newListing.toObject ? newListing.toObject() : newListing;
+      io.emit("listing_created", listingObj);
+      console.log(`⚡ Broadcasted new listing to all clients: ${newListing.title}`);
     }
 
     res.status(201).json(newListing);

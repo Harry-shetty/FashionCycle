@@ -288,7 +288,16 @@ const StoreContext = createContext<StoreContextType | null>(null);
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const { user, isAuthenticated } = useAuth();
-  const [listings, setListings] = useState<Listing[]>(INITIAL_FALLBACK_LISTINGS);
+  const [listings, setListings] = useState<Listing[]>(() => {
+    try {
+      const cached = localStorage.getItem("fc_cached_listings");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {}
+    return INITIAL_FALLBACK_LISTINGS;
+  });
 
   // Synchronous local hydration on initialization to eliminate 0-orders delay / flash
   const [orders, setOrders] = useState<OrderItem[]>(() => {
@@ -372,6 +381,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         const listingsRes = await apiRequest<Listing[]>("/listings").catch(() => []);
         if (listingsRes && listingsRes.length > 0) {
           setListings(listingsRes);
+          try {
+            localStorage.setItem("fc_cached_listings", JSON.stringify(listingsRes));
+          } catch (e) {}
           setIsMongoConnected(true);
         }
       } catch (err) {
@@ -493,8 +505,27 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     const handleListingCreated = (newItem: Listing) => {
       setListings((prev) => {
         if (prev.some((item) => item.id === newItem.id)) return prev;
-        return [newItem, ...prev];
+        const next = [newItem, ...prev];
+        try {
+          localStorage.setItem("fc_cached_listings", JSON.stringify(next));
+        } catch (e) {}
+        return next;
       });
+
+      // Real-time alert & notification for buyers
+      if (user?.role !== "seller") {
+        showToast(`✨ Fresh Drop: "${newItem.title}" just published!`);
+        setNotifications((prev) => [
+          {
+            id: `notif-drop-${Date.now()}`,
+            icon: "🛍️",
+            text: `New Arrival: "${newItem.title}" by ${newItem.brand} (${newItem.price}₹) just dropped in the shop!`,
+            time: "Just now",
+            read: false,
+          },
+          ...prev,
+        ]);
+      }
     };
 
     socket.on("connect", onConnect);
@@ -521,14 +552,24 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify(newListing),
       });
 
-      setListings((prev) => [created, ...prev]);
+      setListings((prev) => {
+        const next = [created, ...prev.filter((l) => l.id !== created.id)];
+        try {
+          localStorage.setItem("fc_cached_listings", JSON.stringify(next));
+        } catch (e) {}
+        return next;
+      });
+
+      // Broadcast over WebSocket directly so all connected buyer clients receive it immediately
+      socket.emit("publish_listing", created);
+
       setImpact((prev) => ({
         ...prev,
         items: prev.items + 1,
         co2: Number((prev.co2 + 3.2).toFixed(1)),
         water: prev.water + 320,
       }));
-      showToast(`Piece "${newListing.title}" saved to MongoDB! 🎉`);
+      showToast(`Piece "${newListing.title}" saved to MongoDB & published live! 🎉`);
     } catch (err: any) {
       console.error("MongoDB listing error:", err);
       // Fallback local listing with id and createdAt so it displays reliably on screen
@@ -540,7 +581,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         views: 0,
         likes: 0,
       };
-      setListings((prev) => [fallback, ...prev]);
+      setListings((prev) => {
+        const next = [fallback, ...prev.filter((l) => l.id !== fallback.id)];
+        try {
+          localStorage.setItem("fc_cached_listings", JSON.stringify(next));
+        } catch (e) {}
+        return next;
+      });
+      socket.emit("publish_listing", fallback);
       showToast(err?.message ? `Notice: ${err.message}` : "Listing created locally", "info");
     }
   };

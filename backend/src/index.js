@@ -84,6 +84,12 @@ io.on("connection", (socket) => {
   io.emit("users_online", { count: activeSockets.size });
   console.log(`⚡ Socket.IO client connected: ${socket.id} (Total: ${activeSockets.size})`);
 
+  // Real-time listing broadcast across clients
+  socket.on("publish_listing", (newListing) => {
+    socket.broadcast.emit("listing_created", newListing);
+    console.log(`⚡ Broadcasted new listing via WebSocket: ${newListing?.title || "Item"}`);
+  });
+
   // Join / Leave rooms
   socket.on("join_conversation", (conversationId) => {
     socket.join(conversationId);
