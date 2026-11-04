@@ -23,7 +23,7 @@ export default function Navbar() {
 
   const buyerLinks = [
     { label: "Home", href: "/home" },
-    { label: "Wishlist", href: "/wishlist", badge: savedIds.length > 0 ? savedIds.length : undefined },
+    { label: "Shop", href: "/shop" },
     { label: "Orders", href: "/orders" },
     { label: "Leaderboard", href: "/leaderboard" },
     { label: "Community", href: "/community" },
