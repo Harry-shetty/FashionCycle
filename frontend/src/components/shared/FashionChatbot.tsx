@@ -576,34 +576,6 @@ export default function FashionChatbot() {
     setAttachedImages([]);
     setIsTyping(true);
 
-    // 1. Check predetermined mock FAQ data first (directly uses mock data instead of Gemini API)
-    if (stagedImages.length === 0) {
-      const faqMatch = findFaqMatch(trimmed);
-      if (faqMatch) {
-        setTimeout(() => {
-          const botMessage: Message = {
-            id: `bot-${Date.now()}`,
-            sender: "bot",
-            text: faqMatch.text,
-            details: {
-              topAction: faqMatch.topAction,
-              actionBreakdown: faqMatch.actionBreakdown,
-              estimatedValue: faqMatch.estimatedValue,
-              co2Saved: faqMatch.co2Saved,
-              waterSaved: faqMatch.waterSaved,
-              styleTags: faqMatch.styleTags,
-              suggestedPrompts: faqMatch.suggestedPrompts,
-            },
-            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-          };
-          setMessages((prev) => [...prev, botMessage]);
-          saveMessageToMongoDB(botMessage);
-          setIsTyping(false);
-        }, 350);
-        return;
-      }
-    }
-
     try {
       const geminiImages = stagedImages.map((img) => {
         const [header, base64] = img.url.split(",");
@@ -611,6 +583,7 @@ export default function FashionChatbot() {
         return { mimeType, base64 };
       });
 
+      // Always query the live Gemini AI model with circular management scoring and strict guardrails
       const response = await queryGemini(trimmed, geminiImages);
 
       const botMessage: Message = {
