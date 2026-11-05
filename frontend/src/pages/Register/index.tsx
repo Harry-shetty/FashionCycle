@@ -29,7 +29,7 @@ export default function RegisterPage() {
     try {
       await register({ name, email, password, role });
       showToast(`Welcome to FashionCycle as a verified ${role}! 🎉`);
-      navigate(role === "seller" ? "/listings" : "/shop");
+      navigate("/home");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed");
     } finally {
@@ -40,13 +40,13 @@ export default function RegisterPage() {
   function handleDemoBuyer() {
     loginAsDemo("Sophia Laurent", "buyer");
     showToast("Signed in as Demo Buyer (Sophia Laurent) 🛍️");
-    navigate("/shop");
+    navigate("/home");
   }
 
   function handleDemoSeller() {
     loginAsDemo("Harsha EcoStudio", "seller");
     showToast("Signed in as Demo Seller (Harsha EcoStudio) 🏷️");
-    navigate("/listings");
+    navigate("/home");
   }
 
   const inputStyle = {

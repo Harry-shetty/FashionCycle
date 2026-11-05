@@ -16,7 +16,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   if (isAuthenticated) {
-    return <Navigate to={isSeller ? "/listings" : "/home"} replace />;
+    return <Navigate to="/home" replace />;
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -31,7 +31,7 @@ export default function LoginPage() {
           ? "Welcome, Seller! Signed in with admin@gmail.com 🏷️"
           : `Welcome back, Buyer! Signed in with ${email} 🌿`
       );
-      navigate(isSeller ? "/listings" : "/home");
+      navigate("/home");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {
@@ -61,7 +61,7 @@ export default function LoginPage() {
     try {
       await login({ email: "admin@gmail.com", password: "123456789" });
       showToast("Signed in as Seller (admin@gmail.com) 🏷️");
-      navigate("/listings");
+      navigate("/home");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {
@@ -78,7 +78,7 @@ export default function LoginPage() {
   function handleDemoSeller() {
     loginAsDemo("Harsha EcoStudio", "seller");
     showToast("Signed in as Demo Seller (Harsha EcoStudio) 🏷️");
-    navigate("/listings");
+    navigate("/home");
   }
 
   const inputStyle = {
