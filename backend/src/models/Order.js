@@ -17,6 +17,8 @@ const orderSchema = new mongoose.Schema(
     carrier: { type: String, default: "EcoCourier Express (100% Electric)" },
     estimatedDelivery: { type: String, default: "2-3 business days" },
     address: { type: String, default: "Flat 402, Green Meadows, Bengaluru, 560034" },
+    customer: { type: String },
+    sellerId: { type: String },
     buyerId: { type: String, default: "user-current" },
   },
   { timestamps: true }

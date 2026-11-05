@@ -126,13 +126,15 @@ export default function OrdersPage() {
               <>
                 <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>📦</div>
                 <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.4rem", fontWeight: 700, marginBottom: "0.5rem" }}>
-                  No orders placed yet
+                  {isSeller ? "No customer orders received yet" : "No orders placed yet"}
                 </h3>
                 <p style={{ fontFamily: "var(--font-body)", color: "var(--muted)", fontSize: "0.9rem", marginBottom: "1.5rem" }}>
-                  Explore pre-loved designer drops and cycle your first piece!
+                  {isSeller
+                    ? "List more pre-loved pieces to receive customer orders and start dispatching!"
+                    : "Explore pre-loved designer drops and cycle your first piece!"}
                 </p>
                 <Link
-                  to="/shop"
+                  to={isSeller ? "/listings" : "/shop"}
                   style={{
                     background: "var(--accent)",
                     color: "#0a0a08",
@@ -145,7 +147,7 @@ export default function OrdersPage() {
                     display: "inline-block",
                   }}
                 >
-                  Browse Marketplace →
+                  {isSeller ? "Manage Inventory →" : "Browse Marketplace →"}
                 </Link>
               </>
             ) : (
@@ -221,7 +223,7 @@ export default function OrdersPage() {
                     {order.item}
                   </div>
                   <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.72rem", color: "var(--muted)" }}>
-                    {order.id} · {order.date} · Seller: {order.seller}
+                    {order.id} · {order.date} · {isSeller ? `Buyer: ${order.customer || order.address?.split(",")[0] || "Verified Buyer"}` : `Seller: ${order.seller}`}
                   </div>
                   <div style={{ fontFamily: "var(--font-body)", fontSize: "0.8rem", color: "var(--muted)", marginTop: "0.3rem" }}>
                     {order.estimatedDelivery}
@@ -263,7 +265,7 @@ export default function OrdersPage() {
                     onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.04)")}
                     onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
                   >
-                    📍 Live Tracking
+                    {isSeller ? "📍 Live Dispatch Tracking" : "📍 Live Tracking"}
                   </button>
 
                   {order.status !== "Delivered" && (

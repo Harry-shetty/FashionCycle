@@ -83,7 +83,7 @@ function WelcomeBanner() {
           id: "listings",
           count: activeCount,
           label: "Active Listings",
-          badge: activeCount > 0 ? "✦ CIRCULATING" : "✦ READY TO LIST",
+          badge: activeCount > 0 ? "✦ CIRCULATING" : "✦ READY",
           badgeColor: "var(--accent)",
           badgeBg: "rgba(138,223,122,0.14)",
           icon: "🏷️",
@@ -92,12 +92,12 @@ function WelcomeBanner() {
         },
         {
           id: "community",
-          count: "✦",
+          count: "24+",
           label: "Seller Community",
-          badge: "✦ VERIFIED STUDIO",
+          badge: "✦ VERIFIED",
           badgeColor: "var(--accent)",
           badgeBg: "rgba(138,223,122,0.14)",
-          icon: "🏪",
+          icon: "👥",
           subtext: "Explore seller network →",
           link: "/community",
         },
@@ -392,9 +392,9 @@ function WelcomeBanner() {
               backdropFilter: "blur(12px)",
               border: "1px solid rgba(138,223,122,0.2)",
               borderRadius: "18px",
-              padding: "1.3rem 1.15rem",
-              width: "172px",
-              minWidth: "165px",
+              padding: "1.25rem 1.2rem",
+              width: "182px",
+              minWidth: "172px",
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
@@ -419,7 +419,7 @@ function WelcomeBanner() {
             }}
           >
             {/* Top row: Status Badge & Floating Animated Icon */}
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem", gap: "8px" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.9rem", gap: "8px" }}>
               <span
                 style={{
                   fontFamily: "var(--font-mono)",
@@ -429,19 +429,23 @@ function WelcomeBanner() {
                   border: `1px solid ${cardItem.badgeColor}40`,
                   padding: "3px 8px",
                   borderRadius: "100px",
-                  letterSpacing: "0.06em",
+                  letterSpacing: "0.05em",
                   fontWeight: 700,
                   whiteSpace: "nowrap",
                   lineHeight: 1.2,
+                  flexShrink: 0,
                 }}
               >
                 {cardItem.badge}
               </span>
               <span
                 style={{
-                  fontSize: "1.35rem",
+                  fontSize: "1.28rem",
                   lineHeight: 1,
-                  display: "inline-block",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
                   animation: "float-gentle 3.2s ease-in-out infinite",
                   animationDelay: `${idx * 0.4}s`,
                   filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.35))",
@@ -456,11 +460,11 @@ function WelcomeBanner() {
               <div
                 style={{
                   fontFamily: "var(--font-display)",
-                  fontSize: "2.3rem",
+                  fontSize: "2.2rem",
                   fontWeight: 900,
                   color: "var(--fg)",
-                  lineHeight: 1,
-                  letterSpacing: "-0.03em",
+                  lineHeight: 1.05,
+                  letterSpacing: "-0.02em",
                   marginBottom: "0.35rem",
                 }}
               >
@@ -508,25 +512,40 @@ function StatsRow() {
   const navigate = useNavigate();
 
   const isDemo = user?.email === "harsha@gmail.com" || user?.email === "admin@gmail.com";
+
+  // Calculate dynamic delivered earnings strictly from delivered customer orders
+  const isOrderDelivered = (status?: string) => {
+    const s = (status || "").toLowerCase().trim();
+    return s.includes("deliver") || s.includes("complete") || s.includes("received");
+  };
+  const deliveredOrders = orders.filter((o) => isOrderDelivered(o.status));
+  const deliveredEarnings = deliveredOrders.reduce((sum, o) => sum + (Number(o.price) || 0), 0);
+
   const userSavings = (impact.money !== undefined && impact.money !== null && impact.money > 0)
     ? impact.money
     : (isDemo ? 480 : 0);
 
   const userWater = (impact.water !== undefined && impact.water !== null && impact.water > 0)
     ? impact.water
-    : (isDemo ? 2400 : 0);
+    : (isDemo ? (isSeller ? 3600 : 2400) : 0);
 
   const userCo2 = (impact.co2 !== undefined && impact.co2 !== null && impact.co2 > 0)
     ? Math.round(impact.co2)
-    : (isDemo ? 48 : 0);
+    : (isDemo ? (isSeller ? 74 : 48) : 0);
 
-  const userEarnings = (impact.money !== undefined && impact.money !== null && impact.money > 0)
-    ? impact.money
-    : (isDemo ? 1240 : 0);
+  const userEarnings = isSeller
+    ? (deliveredEarnings > 0
+        ? deliveredEarnings
+        : ((impact.money !== undefined && impact.money !== null && impact.money > 0)
+            ? impact.money
+            : (isDemo ? 1240 : 0)))
+    : ((impact.money !== undefined && impact.money !== null && impact.money > 0)
+        ? impact.money
+        : (isDemo ? 1240 : 0));
 
   const userOrdersCount = orders.length > 0
     ? orders.length
-    : (isDemo ? 4 : 0);
+    : (isDemo ? (isSeller ? 5 : 4) : 0);
 
   const activeDeliveries = orders.filter((o) => o.status === "In Transit" || o.status === "Processing").length;
   const userActiveDeliveries = orders.length > 0
@@ -540,9 +559,11 @@ function StatsRow() {
           value: userEarnings,
           prefix: "",
           suffix: "₹",
-          trend: userEarnings > 0 ? "+124₹ this month" : "Start selling to earn",
+          trend: deliveredOrders.length > 0
+            ? `${deliveredOrders.length} orders delivered · Settled`
+            : (userEarnings > 0 ? "+124₹ this month" : "Start selling to earn"),
           up: userEarnings > 0,
-          link: "/profile",
+          link: "/orders",
         },
         {
           label: "Items Listed",

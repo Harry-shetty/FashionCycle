@@ -9,6 +9,7 @@ export interface OrderItem {
   id: string;
   item: string;
   seller: string;
+  customer?: string;
   date: string;
   price: number;
   status: "Delivered" | "In Transit" | "Processing" | "Cancelled";
@@ -244,6 +245,110 @@ export const HARSHA_DEFAULT_ORDERS: OrderItem[] = [
   },
 ];
 
+export const SELLER_DEFAULT_ORDERS: OrderItem[] = [
+  {
+    id: "#FC-00520",
+    item: "Vintage Ralph Lauren Wool Blazer",
+    seller: "Admin Seller Studio",
+    customer: "Sophia Laurent (Bengaluru)",
+    date: "Nov 3, 2026",
+    price: 85,
+    status: "In Transit",
+    img: "https://images.unsplash.com/photo-1629511565591-a1d494ad6c58?w=200&h=200&fit=crop&auto=format",
+    trackingNumber: "FC-IND-9941088",
+    carrier: "EcoCourier Express (100% Electric)",
+    estimatedDelivery: "Out for delivery to buyer today",
+    address: "Flat 204, Indiranagar 12th Main, Bengaluru, 560038",
+  },
+  {
+    id: "#FC-00488",
+    item: "Toteme Silk Midi Dress",
+    seller: "Admin Seller Studio",
+    customer: "Priya Sen (Mumbai)",
+    date: "Oct 28, 2026",
+    price: 180,
+    status: "Delivered",
+    img: "https://images.unsplash.com/photo-1664076458686-3449062080ac?w=200&h=200&fit=crop&auto=format",
+    trackingNumber: "FC-IND-7782194",
+    carrier: "EcoCourier Express",
+    estimatedDelivery: "Delivered & verified on Oct 30, 2026",
+    address: "Tower 3, Bandra West, Mumbai, 400050",
+  },
+  {
+    id: "#FC-00432",
+    item: "Yves Saint Laurent Rive Gauche Trench",
+    seller: "Admin Seller Studio",
+    customer: "Ananya Verma (Delhi)",
+    date: "Oct 15, 2026",
+    price: 480,
+    status: "Delivered",
+    img: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=200&h=200&fit=crop&auto=format",
+    trackingNumber: "FC-IND-6549012",
+    carrier: "BlueDart CarbonNeutral",
+    estimatedDelivery: "Delivered & verified on Oct 18, 2026",
+    address: "Sector 14, Greater Kailash 1, New Delhi, 110048",
+  },
+  {
+    id: "#FC-00395",
+    item: "Celine Triomphe Wool Flannel Trousers",
+    seller: "Admin Seller Studio",
+    customer: "Kavya Nambiar (Kochi)",
+    date: "Oct 02, 2026",
+    price: 320,
+    status: "Delivered",
+    img: "https://images.unsplash.com/photo-1604284195847-88dc4b5a9faa?w=200&h=200&fit=crop&auto=format",
+    trackingNumber: "FC-IND-5412980",
+    carrier: "EcoCourier Express",
+    estimatedDelivery: "Delivered & verified on Oct 05, 2026",
+    address: "Marine Drive Enclave, Kochi, 682011",
+  },
+  {
+    id: "#FC-00340",
+    item: "Issey Miyake Pleats Please Top",
+    seller: "Admin Seller Studio",
+    customer: "Rohan Kapoor (Pune)",
+    date: "Sep 18, 2026",
+    price: 260,
+    status: "Delivered",
+    img: "https://images.unsplash.com/photo-1624192647570-1131acc12ccf?w=200&h=200&fit=crop&auto=format",
+    trackingNumber: "FC-IND-4321908",
+    carrier: "EcoCourier Express",
+    estimatedDelivery: "Delivered & verified on Sep 21, 2026",
+    address: "Koregaon Park Lane 7, Pune, 411001",
+  },
+];
+
+export const SELLER_DEFAULT_IMPACT: ImpactStats = {
+  co2: 74.2,
+  water: 3600,
+  items: 4,
+  money: 1240,
+};
+
+export const SELLER_DEFAULT_NOTIFS: NotificationItem[] = [
+  {
+    id: "notif-s1",
+    icon: "🚚",
+    text: "Order #FC-00520 (Ralph Lauren Wool Blazer) is currently In Transit to Sophia Laurent.",
+    time: "2 hours ago",
+    read: false,
+  },
+  {
+    id: "notif-s2",
+    icon: "💰",
+    text: "Payout of 180₹ for Order #FC-00488 (Toteme Silk Dress) has been credited to your studio balance.",
+    time: "2 days ago",
+    read: true,
+  },
+  {
+    id: "notif-s3",
+    icon: "⭐",
+    text: "Buyer rated Order #FC-00432 5 stars: 'Exceptional vintage quality and zero-waste packaging!'",
+    time: "3 days ago",
+    read: true,
+  },
+];
+
 export const HARSHA_DEFAULT_IMPACT: ImpactStats = {
   co2: 48.4,
   water: 2400,
@@ -306,9 +411,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       const savedUser = savedUserStr ? JSON.parse(savedUserStr) : null;
       const uid = savedUser?.id;
       const isHarsha = savedUser?.email === "harsha@gmail.com" || uid === "usr-buyer-harsha";
+      const isSeller = savedUser?.email === "admin@gmail.com" || uid === "usr-seller-admin" || savedUser?.role === "seller";
       if (uid) {
         const local = localStorage.getItem(`fc_orders_${uid}`);
         if (local) return JSON.parse(local);
+      }
+      if (isSeller) {
+        return SELLER_DEFAULT_ORDERS;
       }
       if (isHarsha) {
         return HARSHA_DEFAULT_ORDERS;
@@ -340,9 +449,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       const savedUser = savedUserStr ? JSON.parse(savedUserStr) : null;
       const uid = savedUser?.id;
       const isHarsha = savedUser?.email === "harsha@gmail.com" || uid === "usr-buyer-harsha";
+      const isSeller = savedUser?.email === "admin@gmail.com" || uid === "usr-seller-admin" || savedUser?.role === "seller";
       if (uid) {
         const local = localStorage.getItem(`fc_impact_${uid}`);
         if (local) return JSON.parse(local);
+      }
+      if (isSeller) {
+        return SELLER_DEFAULT_IMPACT;
       }
       if (isHarsha) {
         return HARSHA_DEFAULT_IMPACT;
@@ -405,6 +518,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
     const currentUserId = user.id;
     const isHarsha = user.email === "harsha@gmail.com" || user.id === "usr-buyer-harsha";
+    const isSeller = user.email === "admin@gmail.com" || user.id === "usr-seller-admin" || user.role === "seller";
 
     // 1. Immediately & synchronously load cached wishlist for THIS user
     let localSaved = localStorage.getItem(`fc_saved_${currentUserId}`);
@@ -425,34 +539,44 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
     // 2. Immediately & synchronously load cached orders for THIS user (eliminates 0-orders flash / delay)
     let localOrders = localStorage.getItem(`fc_orders_${currentUserId}`);
-    if (!localOrders && isHarsha) {
-      localOrders = JSON.stringify(HARSHA_DEFAULT_ORDERS);
-      localStorage.setItem(`fc_orders_${currentUserId}`, localOrders);
+    if (!localOrders) {
+      if (isSeller) {
+        localOrders = JSON.stringify(SELLER_DEFAULT_ORDERS);
+        localStorage.setItem(`fc_orders_${currentUserId}`, localOrders);
+      } else if (isHarsha) {
+        localOrders = JSON.stringify(HARSHA_DEFAULT_ORDERS);
+        localStorage.setItem(`fc_orders_${currentUserId}`, localOrders);
+      }
     }
     if (localOrders) {
       try {
         setOrders(JSON.parse(localOrders));
       } catch {
-        setOrders(isHarsha ? HARSHA_DEFAULT_ORDERS : []);
+        setOrders(isSeller ? SELLER_DEFAULT_ORDERS : (isHarsha ? HARSHA_DEFAULT_ORDERS : []));
       }
     } else {
-      setOrders(isHarsha ? HARSHA_DEFAULT_ORDERS : []);
+      setOrders(isSeller ? SELLER_DEFAULT_ORDERS : (isHarsha ? HARSHA_DEFAULT_ORDERS : []));
     }
 
     // 3. Immediately & synchronously load cached impact for THIS user (eliminates 0-impact flash)
     let localImpact = localStorage.getItem(`fc_impact_${currentUserId}`);
-    if (!localImpact && isHarsha) {
-      localImpact = JSON.stringify(HARSHA_DEFAULT_IMPACT);
-      localStorage.setItem(`fc_impact_${currentUserId}`, localImpact);
+    if (!localImpact) {
+      if (isSeller) {
+        localImpact = JSON.stringify(SELLER_DEFAULT_IMPACT);
+        localStorage.setItem(`fc_impact_${currentUserId}`, localImpact);
+      } else if (isHarsha) {
+        localImpact = JSON.stringify(HARSHA_DEFAULT_IMPACT);
+        localStorage.setItem(`fc_impact_${currentUserId}`, localImpact);
+      }
     }
     if (localImpact) {
       try {
         setImpact(JSON.parse(localImpact));
       } catch {
-        setImpact(isHarsha ? HARSHA_DEFAULT_IMPACT : { co2: 0, water: 0, items: 0, money: 0 });
+        setImpact(isSeller ? SELLER_DEFAULT_IMPACT : (isHarsha ? HARSHA_DEFAULT_IMPACT : { co2: 0, water: 0, items: 0, money: 0 }));
       }
     } else {
-      setImpact(isHarsha ? HARSHA_DEFAULT_IMPACT : { co2: 0, water: 0, items: 0, money: 0 });
+      setImpact(isSeller ? SELLER_DEFAULT_IMPACT : (isHarsha ? HARSHA_DEFAULT_IMPACT : { co2: 0, water: 0, items: 0, money: 0 }));
     }
 
     async function fetchUserData() {
@@ -472,19 +596,19 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
         const effectiveOrders: OrderItem[] = (ordersRes && ordersRes.length > 0)
           ? ordersRes
-          : (isHarsha ? HARSHA_DEFAULT_ORDERS : []);
+          : (isSeller ? SELLER_DEFAULT_ORDERS : (isHarsha ? HARSHA_DEFAULT_ORDERS : []));
         setOrders(effectiveOrders);
         localStorage.setItem(`fc_orders_${currentUserId}`, JSON.stringify(effectiveOrders));
 
         const effectiveImpact: ImpactStats = (impactRes && (impactRes.money > 0 || impactRes.items > 0 || impactRes.co2 > 0))
           ? { ...impactRes, co2: Math.round(Number(impactRes.co2 || 0) * 10) / 10 }
-          : (isHarsha ? HARSHA_DEFAULT_IMPACT : { co2: 0, water: 0, items: 0, money: 0 });
+          : (isSeller ? SELLER_DEFAULT_IMPACT : (isHarsha ? HARSHA_DEFAULT_IMPACT : { co2: 0, water: 0, items: 0, money: 0 }));
         setImpact(effectiveImpact);
         localStorage.setItem(`fc_impact_${currentUserId}`, JSON.stringify(effectiveImpact));
 
         const effectiveNotifs: NotificationItem[] = (notifsRes && notifsRes.length > 0)
           ? notifsRes
-          : (isHarsha ? HARSHA_DEFAULT_NOTIFS : []);
+          : (isSeller ? SELLER_DEFAULT_NOTIFS : (isHarsha ? HARSHA_DEFAULT_NOTIFS : []));
         setNotifications(effectiveNotifs);
       } catch (err) {
         console.warn("MongoDB user data fetch warning:", err);
