@@ -1,4 +1,5 @@
 import express from "express";
+import mongoose from "mongoose";
 import { Order } from "../models/Order.js";
 import { Impact } from "../models/Impact.js";
 import { Notification } from "../models/Notification.js";
@@ -114,22 +115,102 @@ router.patch("/:id", async (req, res) => {
   }
 });
 
-// DELETE /api/orders (clear all orders collection)
-router.delete("/", async (req, res) => {
-  try {
-    const result = await Order.deleteMany({});
-    res.json({ success: true, message: "All orders deleted from MongoDB", count: result.deletedCount });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+// Helper to match order by various ID formats (with or without #)
+function buildOrderQuery(targetId) {
+  if (!targetId) return null;
+  const decoded = decodeURIComponent(String(targetId)).trim();
+  const raw = decoded.replace(/^#/, "");
+  const withHash = `#${raw}`;
+
+  const queries = [
+    { id: decoded },
+    { id: withHash },
+    { id: raw },
+    { trackingNumber: decoded },
+  ];
+
+  if (mongoose.Types.ObjectId.isValid(decoded)) {
+    queries.push({ _id: new mongoose.Types.ObjectId(decoded) });
   }
-});
+
+  return { $or: queries };
+}
 
 // DELETE /api/orders/:id
 router.delete("/:id", async (req, res) => {
   try {
-    const deleted = await Order.findOneAndDelete({ id: req.params.id });
-    if (!deleted) return res.status(404).json({ error: "Order not found" });
-    res.json({ success: true, message: "Order cancelled" });
+    const rawId = req.params.id || req.body?.id || req.body?.orderId || req.query?.id;
+    const query = buildOrderQuery(rawId);
+    if (!query) {
+      return res.status(400).json({ error: "Missing order ID" });
+    }
+
+    const deleted = await Order.findOneAndDelete(query);
+    if (!deleted) {
+      console.warn(`Order cancel notice: ${rawId} not found in MongoDB`);
+      return res.status(404).json({ error: "Order not found in MongoDB" });
+    }
+
+    console.log(`🗑️ Deleted order ${deleted.id} (${deleted.item}) from MongoDB Atlas`);
+
+    // Decrement impact metrics in MongoDB
+    const userId = deleted.buyerId || deleted.userId || getUserId(req);
+    if (userId && userId !== "guest") {
+      const garmentsPurchased = 1;
+      const calcCo2 = Number(Math.max(0, (garmentsPurchased * 12 * 0.70) - (garmentsPurchased * 1)).toFixed(1));
+      const calcWater = Math.max(0, (garmentsPurchased * 2400 * 0.70) - (garmentsPurchased * 100));
+      const calcSavings = Math.round((Number(deleted.price) || 50) * 1.4);
+
+      await Impact.findOneAndUpdate(
+        { userId },
+        { 
+          $inc: { 
+            items: -1, 
+            co2: -calcCo2, 
+            water: -calcWater, 
+            money: -calcSavings 
+          } 
+        }
+      ).catch(() => {});
+    }
+
+    // Broadcast cancellation over Socket.IO
+    const io = req.app.get("io");
+    if (io) {
+      io.emit("order_cancelled", { orderId: deleted.id });
+    }
+
+    res.json({ success: true, message: `Order ${deleted.id} cancelled and removed from MongoDB`, order: deleted });
+  } catch (error) {
+    console.error("Order delete error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// DELETE /api/orders (delete single order via body/query, or wipe all if explicit)
+router.delete("/", async (req, res) => {
+  try {
+    const targetId = req.body?.id || req.body?.orderId || req.query?.id || req.query?.orderId;
+    if (targetId) {
+      const query = buildOrderQuery(targetId);
+      const deleted = await Order.findOneAndDelete(query);
+      if (!deleted) return res.status(404).json({ error: "Order not found in MongoDB" });
+
+      const io = req.app.get("io");
+      if (io) {
+        io.emit("order_cancelled", { orderId: deleted.id });
+      }
+
+      console.log(`🗑️ Deleted order ${deleted.id} via root DELETE /api/orders`);
+      return res.json({ success: true, message: `Order ${deleted.id} cancelled`, order: deleted });
+    }
+
+    if (req.query?.wipeAll === "true" || req.body?.wipeAll === true) {
+      const result = await Order.deleteMany({});
+      return res.json({ success: true, message: "All orders cleared", count: result.deletedCount });
+    }
+
+    return res.status(400).json({ error: "Specify order id to delete or wipeAll=true" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

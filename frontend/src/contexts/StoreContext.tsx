@@ -528,16 +528,24 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       }
     };
 
+    const handleOrderCancelled = ({ orderId }: { orderId: string }) => {
+      setOrders((prev) =>
+        prev.filter((o) => o.id !== orderId && o.id !== `#${orderId}` && o.id !== orderId.replace(/^#/, ""))
+      );
+    };
+
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("users_online", handleUsersOnline);
     socket.on("listing_created", handleListingCreated);
+    socket.on("order_cancelled", handleOrderCancelled);
 
     return () => {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
       socket.off("users_online", handleUsersOnline);
       socket.off("listing_created", handleListingCreated);
+      socket.off("order_cancelled", handleOrderCancelled);
     };
   }, []);
 
@@ -749,17 +757,50 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const cancelOrder = async (orderId: string) => {
     try {
-      await apiRequest(`/orders/${orderId}`, {
-        method: "DELETE",
-      });
+      const cleanId = orderId.trim();
+      const encodedId = encodeURIComponent(cleanId);
+
+      const targetOrder = orders.find(
+        (o) => o.id === cleanId || o.id === cleanId.replace(/^#/, "") || o.id === `#${cleanId}`
+      );
+      const priceToDeduct = targetOrder ? targetOrder.price : 50;
+      const savingsToDeduct = Math.round(priceToDeduct * 1.4);
+      const garmentsPurchased = 1;
+      const waterToDeduct = Math.max(0, (garmentsPurchased * 2400 * 0.70) - (garmentsPurchased * 100));
+      const co2ToDeduct = Number(Math.max(0, (garmentsPurchased * 12 * 0.70) - (garmentsPurchased * 1)).toFixed(1));
+
+      // 1. Optimistically update local orders state & local storage
       setOrders((prev) => {
-        const next = prev.filter((o) => o.id !== orderId);
+        const next = prev.filter(
+          (o) => o.id !== cleanId && o.id !== cleanId.replace(/^#/, "") && o.id !== `#${cleanId}`
+        );
         if (user?.id) {
           localStorage.setItem(`fc_orders_${user.id}`, JSON.stringify(next));
         }
         return next;
       });
-      showToast(`Order ${orderId} cancelled in MongoDB.`, "info");
+
+      // 2. Decrement circular impact metrics
+      setImpact((prev) => {
+        const next = {
+          items: Math.max(0, prev.items - 1),
+          money: Math.max(0, prev.money - savingsToDeduct),
+          water: Math.max(0, prev.water - waterToDeduct),
+          co2: Number(Math.max(0, prev.co2 - co2ToDeduct).toFixed(1)),
+        };
+        if (user?.id) {
+          localStorage.setItem(`fc_impact_${user.id}`, JSON.stringify(next));
+        }
+        return next;
+      });
+
+      // 3. Delete from MongoDB Atlas (encoded URI + JSON body)
+      await apiRequest(`/orders/${encodedId}`, {
+        method: "DELETE",
+        body: JSON.stringify({ id: cleanId, orderId: cleanId }),
+      });
+
+      showToast(`Order ${cleanId} cancelled and deleted from MongoDB Atlas 🌱`, "info");
     } catch (err) {
       console.error("MongoDB order cancel error:", err);
     }

@@ -15,10 +15,32 @@ export default function OrdersPage() {
   const { isSeller } = useAuth();
   const [filter, setFilter] = useState<string>("all");
 
+  // Status classifier helper (matches "In Transit", "Shipped", "Processing", etc.)
+  const isOrderInTransit = (status?: string) => {
+    const s = (status || "").toLowerCase().trim();
+    return s.includes("transit") || s.includes("ship") || s.includes("process") || s.includes("route");
+  };
+
+  const isOrderDelivered = (status?: string) => {
+    const s = (status || "").toLowerCase().trim();
+    return s.includes("deliver") || s.includes("complete") || s.includes("received");
+  };
+
+  const inTransitCount = orders.filter((o) => isOrderInTransit(o.status)).length;
+  const deliveredCount = orders.filter((o) => isOrderDelivered(o.status)).length;
+
   const filtered = orders.filter((o) => {
     if (filter === "all") return true;
-    return o.status.toLowerCase() === filter.toLowerCase();
+    if (filter === "In Transit") return isOrderInTransit(o.status);
+    if (filter === "Delivered") return isOrderDelivered(o.status);
+    return true;
   });
+
+  const filterTabs = [
+    { key: "all", label: `All Orders (${orders.length})` },
+    { key: "In Transit", label: `In Transit (${inTransitCount})` },
+    { key: "Delivered", label: `Delivered (${deliveredCount})` },
+  ];
 
   return (
     <section className="section-pad" style={{ minHeight: "100vh", padding: "4rem 2rem 6rem", background: "var(--bg)" }}>
@@ -65,24 +87,25 @@ export default function OrdersPage() {
             </h1>
           </div>
 
-          <div style={{ display: "flex", gap: "0.5rem" }}>
-            {["all", "In Transit", "Delivered"].map((f) => (
+          <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+            {filterTabs.map((t) => (
               <button
-                key={f}
-                onClick={() => setFilter(f)}
+                key={t.key}
+                onClick={() => setFilter(t.key)}
                 style={{
                   padding: "0.45rem 1.1rem",
                   borderRadius: "100px",
-                  border: `1px solid ${filter === f ? "var(--accent)" : "var(--border)"}`,
-                  background: filter === f ? "rgba(138,223,122,0.12)" : "transparent",
-                  color: filter === f ? "var(--accent)" : "var(--muted)",
+                  border: `1px solid ${filter === t.key ? "var(--accent)" : "var(--border)"}`,
+                  background: filter === t.key ? "rgba(138,223,122,0.12)" : "transparent",
+                  color: filter === t.key ? "var(--accent)" : "var(--muted)",
                   fontFamily: "var(--font-body)",
                   fontSize: "0.8rem",
+                  fontWeight: filter === t.key ? 700 : 500,
                   cursor: "pointer",
                   transition: "all 0.2s",
                 }}
               >
-                {f === "all" ? "All Orders" : f}
+                {t.label}
               </button>
             ))}
           </div>
@@ -99,29 +122,62 @@ export default function OrdersPage() {
               textAlign: "center",
             }}
           >
-            <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>📦</div>
-            <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.4rem", fontWeight: 700, marginBottom: "0.5rem" }}>
-              No orders found
-            </h3>
-            <p style={{ fontFamily: "var(--font-body)", color: "var(--muted)", fontSize: "0.9rem", marginBottom: "1.5rem" }}>
-              Explore pre-loved designer drops and cycle your first piece!
-            </p>
-            <Link
-              to="/shop"
-              style={{
-                background: "var(--accent)",
-                color: "#0a0a08",
-                border: "none",
-                borderRadius: "100px",
-                padding: "0.75rem 1.8rem",
-                fontWeight: 700,
-                fontSize: "0.95rem",
-                textDecoration: "none",
-                display: "inline-block",
-              }}
-            >
-              Browse Marketplace →
-            </Link>
+            {orders.length === 0 ? (
+              <>
+                <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>📦</div>
+                <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.4rem", fontWeight: 700, marginBottom: "0.5rem" }}>
+                  No orders placed yet
+                </h3>
+                <p style={{ fontFamily: "var(--font-body)", color: "var(--muted)", fontSize: "0.9rem", marginBottom: "1.5rem" }}>
+                  Explore pre-loved designer drops and cycle your first piece!
+                </p>
+                <Link
+                  to="/shop"
+                  style={{
+                    background: "var(--accent)",
+                    color: "#0a0a08",
+                    border: "none",
+                    borderRadius: "100px",
+                    padding: "0.75rem 1.8rem",
+                    fontWeight: 700,
+                    fontSize: "0.95rem",
+                    textDecoration: "none",
+                    display: "inline-block",
+                  }}
+                >
+                  Browse Marketplace →
+                </Link>
+              </>
+            ) : (
+              <>
+                <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>
+                  {filter === "In Transit" ? "🚚" : "✨"}
+                </div>
+                <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.4rem", fontWeight: 700, marginBottom: "0.5rem" }}>
+                  No orders currently {filter === "In Transit" ? "in transit" : "delivered"}
+                </h3>
+                <p style={{ fontFamily: "var(--font-body)", color: "var(--muted)", fontSize: "0.9rem", marginBottom: "1.5rem" }}>
+                  {filter === "In Transit"
+                    ? `All ${orders.length} of your orders have already been delivered!`
+                    : `All ${orders.length} of your active orders are currently in transit.`}
+                </p>
+                <button
+                  onClick={() => setFilter("all")}
+                  style={{
+                    background: "var(--accent)",
+                    color: "#0a0a08",
+                    border: "none",
+                    borderRadius: "100px",
+                    padding: "0.75rem 1.8rem",
+                    fontWeight: 700,
+                    fontSize: "0.95rem",
+                    cursor: "pointer",
+                  }}
+                >
+                  Show All Orders ({orders.length}) →
+                </button>
+              </>
+            )}
           </div>
         ) : (
           <div
