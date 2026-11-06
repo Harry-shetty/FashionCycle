@@ -659,9 +659,30 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         setSavedIds(effectiveSaved);
         localStorage.setItem(`fc_saved_${currentUserId}`, JSON.stringify(effectiveSaved));
 
-        const effectiveOrders: OrderItem[] = (ordersRes && ordersRes.length > 0)
-          ? ordersRes
-          : (isSeller ? SELLER_DEFAULT_ORDERS : (isHarsha ? HARSHA_DEFAULT_ORDERS : []));
+        let effectiveOrders: OrderItem[] = [];
+        if (isHarsha) {
+          const map = new Map<string, OrderItem>();
+          (ordersRes || []).forEach((o) => map.set(o.id, o));
+          orders.forEach((o) => {
+            if (!map.has(o.id)) map.set(o.id, o);
+          });
+          HARSHA_DEFAULT_ORDERS.forEach((o) => {
+            if (!map.has(o.id)) map.set(o.id, o);
+          });
+          effectiveOrders = Array.from(map.values());
+        } else if (isSeller) {
+          const map = new Map<string, OrderItem>();
+          (ordersRes || []).forEach((o) => map.set(o.id, o));
+          orders.forEach((o) => {
+            if (!map.has(o.id)) map.set(o.id, o);
+          });
+          SELLER_DEFAULT_ORDERS.forEach((o) => {
+            if (!map.has(o.id)) map.set(o.id, o);
+          });
+          effectiveOrders = Array.from(map.values());
+        } else {
+          effectiveOrders = ordersRes && ordersRes.length > 0 ? ordersRes : [];
+        }
         setOrders(effectiveOrders);
         localStorage.setItem(`fc_orders_${currentUserId}`, JSON.stringify(effectiveOrders));
 

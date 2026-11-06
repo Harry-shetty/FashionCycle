@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useStore, type OrderItem } from "../../contexts/StoreContext";
 import { useAuth } from "../../hooks/useAuth";
+import { useReveal } from "../../hooks/useReveal";
 import BackButton from "../../components/shared/BackButton";
 
 const statusColor: Record<string, string> = {
@@ -11,6 +12,7 @@ const statusColor: Record<string, string> = {
 };
 
 export default function OrdersPage() {
+  useReveal();
   const { orders, openOrderTrackingModal, cancelOrder } = useStore();
   const { isSeller } = useAuth();
   const [filter, setFilter] = useState<string>("all");
@@ -183,7 +185,6 @@ export default function OrdersPage() {
           </div>
         ) : (
           <div
-            className="reveal-up"
             style={{
               background: "var(--card-bg)",
               border: "1px solid var(--border)",
@@ -191,6 +192,8 @@ export default function OrdersPage() {
               padding: "1.5rem 2rem",
               display: "flex",
               flexDirection: "column",
+              opacity: 1,
+              transform: "none",
             }}
           >
             {filtered.map((order: OrderItem, i: number) => (
