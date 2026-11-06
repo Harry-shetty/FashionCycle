@@ -6,6 +6,7 @@ import { useStore } from "../../contexts/StoreContext";
 import { useReveal } from "../../hooks/useReveal";
 import { FEED, RECOMMENDED } from "../../data/mock";
 import type { Listing } from "../../types/listing.types";
+import { useLeaderboard } from "../../hooks/useLeaderboard";
 
 /* ─── Animated counter ─── */
 function Counter({ target, suffix = "" }: { target: number; suffix?: string }) {
@@ -62,18 +63,17 @@ function WelcomeBanner() {
   const inTransitCount = orders.filter((o) => o.status === "In Transit" || o.status === "Processing").length || (isDemo ? 1 : 0);
   const userOrdersCount = orders.length || (isDemo ? 4 : 0);
 
-  // Dynamic leaderboard rank & badge based on user account (Leaderboard = Top Buyers)
-  const leaderboardRank = isDemo
-    ? "#4"
-    : userOrdersCount > 0
-    ? `#${Math.max(1, 20 - userOrdersCount)}`
-    : "—";
+  // Synchronized leaderboard rank & badge from shared useLeaderboard hook
+  const { currentUserData } = useLeaderboard("month");
+  const leaderboardRank = currentUserData.rank > 0 ? `#${currentUserData.rank}` : "—";
   const leaderboardBadge = isDemo
+    ? "✦ TOP 5%"
+    : currentUserData.rank > 0 && currentUserData.rank <= 10
     ? "✦ TOP BUYER"
-    : userOrdersCount > 0
+    : currentUserData.rank > 0
     ? "✦ ACTIVE BUYER"
     : "🌱 NEW BUYER";
-  const leaderboardSubtext = isDemo || userOrdersCount > 0
+  const leaderboardSubtext = currentUserData.rank > 0
     ? "View top buyers rank →"
     : "Join buyer leaderboard →";
 
@@ -1262,11 +1262,10 @@ function BuyerCuratedDrops() {
 
 /* ─── Two-column: Orders + Leaderboard ─── */
 function OrdersAndLeaderboard() {
-  const { orders, impact, openOrderTrackingModal } = useStore();
+  const { orders, openOrderTrackingModal } = useStore();
   const { user } = useAuth();
   const navigate = useNavigate();
-
-  const isDemo = user?.email === "harsha@gmail.com" || user?.email === "admin@gmail.com";
+  const { list, currentUserData, isDemo } = useLeaderboard("month");
 
   const statusColor: Record<string, string> = {
     Delivered: "var(--accent)",
@@ -1274,14 +1273,7 @@ function OrdersAndLeaderboard() {
     Processing: "#60a5fa",
   };
 
-  const topLeaders = [
-    { rank: 1, medal: "🥇", name: "Ananya Sen", handle: "@ananyathrifts", co2: "164.2 kg", items: "38 thrifted", badge: "Top Circular Buyer", avatar: "AS", isUser: false },
-    { rank: 2, medal: "🥈", name: "Vikram Malhotra", handle: "@vikramvintage", co2: "136.5 kg", items: "29 thrifted", badge: "Zero Waste Buyer", avatar: "VM", isUser: false },
-    { rank: 3, medal: "🥉", name: "Maya Kapoor", handle: "@mayarepeats", co2: "98.4 kg", items: "21 thrifted", badge: "Conscious Collector", avatar: "MK", isUser: false },
-    isDemo
-      ? { rank: 4, medal: "🌿", name: "Harsha (You)", handle: "@harsha", co2: `${(Number(impact.co2) || 48.4).toFixed(1)} kg`, items: `${impact.items || 12} thrifted`, badge: "Top 5% Buyer", avatar: "HA", isUser: true }
-      : { rank: 4, medal: "🌿", name: "Harsha Shetty", handle: "@harsha", co2: "48.4 kg", items: "12 thrifted", badge: "Rising Buyer", avatar: "HA", isUser: false },
-  ];
+  const topLeaders = list.slice(0, 4);
 
   return (
     <div
@@ -1490,84 +1482,88 @@ function OrdersAndLeaderboard() {
         </h2>
 
         {/* Top Leaders */}
-        {topLeaders.map((leader, i) => (
-          <div
-            key={leader.name}
-            onClick={() => navigate("/leaderboard")}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.75rem",
-              padding: "0.75rem 0",
-              borderBottom: i < 3 ? "1px solid var(--border)" : "none",
-              cursor: "pointer",
-              background: leader.isUser ? "rgba(138,223,122,0.06)" : "transparent",
-              borderRadius: leader.isUser ? "10px" : "0",
-              paddingLeft: leader.isUser ? "8px" : "0",
-              paddingRight: leader.isUser ? "8px" : "0",
-              transition: "background 0.2s, opacity 0.2s",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.85")}
-            onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
-          >
-            {/* Rank / Medal */}
-            <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "1.1rem", width: "24px", textAlign: "center" }}>
-              {leader.medal}
-            </div>
-
-            {/* Avatar */}
+        {topLeaders.map((leader, i) => {
+          const medal = leader.rank === 1 ? "🥇" : leader.rank === 2 ? "🥈" : leader.rank === 3 ? "🥉" : "🌿";
+          return (
             <div
+              key={leader.handle}
+              onClick={() => navigate("/leaderboard")}
               style={{
-                width: 36,
-                height: 36,
-                borderRadius: "50%",
-                background: leader.isUser
-                  ? "linear-gradient(135deg,var(--accent),var(--accent2))"
-                  : "rgba(255,255,255,0.08)",
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center",
-                fontFamily: "var(--font-display)",
-                fontWeight: 700,
-                fontSize: "0.75rem",
-                color: leader.isUser ? "#0a0a08" : "var(--fg)",
-                flexShrink: 0,
+                gap: "0.75rem",
+                padding: "0.75rem 0",
+                borderBottom: i < topLeaders.length - 1 ? "1px solid var(--border)" : "none",
+                cursor: "pointer",
+                background: leader.isCurrentUser ? "rgba(138,223,122,0.06)" : "transparent",
+                borderRadius: leader.isCurrentUser ? "10px" : "0",
+                paddingLeft: leader.isCurrentUser ? "8px" : "0",
+                paddingRight: leader.isCurrentUser ? "8px" : "0",
+                transition: "background 0.2s, opacity 0.2s",
               }}
+              onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.85")}
+              onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
             >
-              {leader.avatar}
-            </div>
+              {/* Rank / Medal */}
+              <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "1.1rem", width: "24px", textAlign: "center" }}>
+                {medal}
+              </div>
 
-            {/* Info */}
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                <span style={{ fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "0.85rem", color: "var(--fg)" }}>
-                  {leader.name}
-                </span>
-                {leader.isUser && (
-                  <span style={{ background: "var(--accent)", color: "#0a0a08", fontSize: "0.55rem", fontWeight: 800, padding: "1px 5px", borderRadius: "100px", fontFamily: "var(--font-mono)" }}>
-                    YOU
+              {/* Avatar */}
+              <div
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: "50%",
+                  background: leader.isCurrentUser
+                    ? "linear-gradient(135deg,var(--accent),var(--accent2))"
+                    : "rgba(255,255,255,0.08)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontFamily: "var(--font-display)",
+                  fontWeight: 700,
+                  fontSize: "0.75rem",
+                  color: leader.isCurrentUser ? "#0a0a08" : "var(--fg)",
+                  flexShrink: 0,
+                }}
+              >
+                {leader.avatar}
+              </div>
+
+              {/* Info */}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  <span style={{ fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "0.85rem", color: "var(--fg)" }}>
+                    {leader.name}
                   </span>
-                )}
+                  {leader.isCurrentUser && (
+                    <span style={{ background: "var(--accent)", color: "#0a0a08", fontSize: "0.55rem", fontWeight: 800, padding: "1px 5px", borderRadius: "100px", fontFamily: "var(--font-mono)" }}>
+                      YOU
+                    </span>
+                  )}
+                </div>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.62rem", color: "var(--muted)" }}>
+                  {leader.itemsCycled} cycled · {leader.badge}
+                </div>
               </div>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.62rem", color: "var(--muted)" }}>
-                {leader.items} cycled · {leader.badge}
+
+              {/* CO2 Saved & Points */}
+              <div style={{ textAlign: "right", flexShrink: 0 }}>
+                <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "0.95rem", color: "var(--accent)" }}>
+                  {leader.co2Saved} kg
+                </div>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.58rem", color: "var(--muted)" }}>
+                  {leader.points.toLocaleString()} PTS
+                </div>
               </div>
             </div>
+          );
+        })}
 
-            {/* CO2 Saved */}
-            <div style={{ textAlign: "right", flexShrink: 0 }}>
-              <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "0.95rem", color: "var(--accent)" }}>
-                {leader.co2}
-              </div>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.58rem", color: "var(--muted)" }}>
-                CO₂ SAVED
-              </div>
-            </div>
-          </div>
-        ))}
-
-        {user && !isDemo && (
+        {user && !topLeaders.some((l) => l.isCurrentUser) && (
           <div
+            onClick={() => navigate("/leaderboard")}
             style={{
               marginTop: "0.85rem",
               padding: "0.65rem 0.85rem",
@@ -1577,6 +1573,7 @@ function OrdersAndLeaderboard() {
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
+              cursor: "pointer",
             }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
@@ -1595,14 +1592,16 @@ function OrdersAndLeaderboard() {
                   fontFamily: "var(--font-display)",
                 }}
               >
-                {user.name ? user.name.slice(0, 2).toUpperCase() : "ME"}
+                {currentUserData.avatar}
               </div>
               <div>
                 <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--fg)" }}>
-                  {user.name || "Your Account"} (You)
+                  {currentUserData.name}
                 </div>
                 <div style={{ fontSize: "0.62rem", fontFamily: "var(--font-mono)", color: "var(--muted)" }}>
-                  {impact.items > 0 ? `${impact.items} cycled · Active Cycler` : "0 cycled · 🌱 New Cycler"}
+                  {currentUserData.itemsCycled > 0
+                    ? `${currentUserData.itemsCycled} cycled · ${currentUserData.badge}`
+                    : "0 cycled · 🌱 New Cycler"}
                 </div>
               </div>
             </div>
@@ -1615,10 +1614,12 @@ function OrdersAndLeaderboard() {
                   fontWeight: 700,
                 }}
               >
-                {impact.items > 0 ? `#${Math.max(1, 20 - orders.length)}` : "Unranked"}
+                {currentUserData.rank > 0 ? `#${currentUserData.rank}` : "Unranked"}
               </span>
               <div style={{ fontSize: "0.58rem", fontFamily: "var(--font-mono)", color: "var(--muted)" }}>
-                {impact.co2 > 0 ? `${impact.co2} kg CO₂` : "Start thrifting"}
+                {currentUserData.co2Saved > 0
+                  ? `${currentUserData.co2Saved} kg · ${currentUserData.points.toLocaleString()} pts`
+                  : "Start thrifting"}
               </div>
             </div>
           </div>
