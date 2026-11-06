@@ -20,8 +20,11 @@ const orderSchema = new mongoose.Schema(
     customer: { type: String },
     sellerId: { type: String },
     buyerId: { type: String, default: "user-current" },
+    userId: { type: String },
+    buyerEmail: { type: String },
+    listingId: { type: String },
   },
-  { timestamps: true }
+  { timestamps: true, strict: false }
 );
 
 export const Order = mongoose.model("Order", orderSchema, "buyer_orders");

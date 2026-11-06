@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import { Order } from "../models/Order.js";
 import { Impact } from "../models/Impact.js";
 import { Notification } from "../models/Notification.js";
+import { Listing } from "../models/Listing.js";
 
 const router = express.Router();
 
@@ -38,7 +39,14 @@ router.get("/", async (req, res) => {
       req.headers["x-user-role"] === "seller";
 
     const queries = [{ buyerId: userId }, { userId }];
-    if (userEmail) queries.push({ buyerId: userEmail }, { userId: userEmail });
+    if (userEmail) {
+      queries.push(
+        { buyerId: userEmail },
+        { userId: userEmail },
+        { buyerEmail: userEmail },
+        { customer: userEmail }
+      );
+    }
     if (isSeller) {
       queries.push(
         { sellerId: userId },
@@ -48,10 +56,17 @@ router.get("/", async (req, res) => {
       );
     }
     if (isPrimary) {
-      queries.push({ buyerId: "default-user" }, { userId: "default-user" });
-      queries.push({ buyerId: { $exists: false } });
-      queries.push({ buyerId: null });
-      queries.push({ buyerId: "" });
+      queries.push(
+        { buyerId: "usr-buyer-harsha" },
+        { userId: "usr-buyer-harsha" },
+        { buyerId: "default-user" },
+        { userId: "default-user" },
+        { customer: "harsha@gmail.com" },
+        { buyerEmail: "harsha@gmail.com" },
+        { buyerId: { $exists: false } },
+        { buyerId: null },
+        { buyerId: "" }
+      );
     }
 
     let orders = await Order.find({ $or: queries }).sort({ createdAt: -1 });
@@ -139,9 +154,13 @@ router.get("/", async (req, res) => {
 // POST /api/orders
 router.post("/", async (req, res) => {
   try {
-    const { item, price, img, seller, savings, co2, water } = req.body;
+    const { item, price, img, seller, savings, co2, water, address, trackingNumber, carrier, estimatedDelivery, status, listingId, sellerId } = req.body;
     const userId = getUserId(req);
-    const orderId = `#FC-00${Math.floor(100 + Math.random() * 900)}`;
+    const userEmail = req.headers["x-user-email"] || req.body?.userEmail || req.body?.buyerEmail || "";
+    const customerName = req.body?.customer || req.body?.shippingName || (userEmail ? userEmail.split("@")[0] : "Valued Buyer");
+    
+    // Generate unique order ID or use provided one
+    const orderId = req.body?.id || `#FC-${Math.floor(10000 + Math.random() * 90000)}`;
 
     const numPrice = Number(price) || 50;
     const calcSavings = Number(savings) || Math.round(numPrice * 1.4);
@@ -153,24 +172,36 @@ router.post("/", async (req, res) => {
       id: orderId,
       item,
       seller: seller || "FashionCycle Verified Seller",
-      date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+      sellerId: sellerId || "seller-1",
+      date: req.body?.date || new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
       price: numPrice,
-      status: "In Transit",
+      status: status || "In Transit",
       img: img || "https://images.unsplash.com/photo-1629511565591-a1d494ad6c58?w=600&h=800&fit=crop&auto=format",
-      trackingNumber: `FC-IND-${Math.floor(1000000 + Math.random() * 9000000)}`,
-      carrier: "EcoCourier Express (100% Electric)",
-      estimatedDelivery: "Arriving Tomorrow by 5:00 PM",
-      address: req.body?.address || "Flat 402, Green Meadows, Bengaluru, 560034",
-      buyerId: userId,
+      trackingNumber: trackingNumber || `FC-IND-${Math.floor(1000000 + Math.random() * 9000000)}`,
+      carrier: carrier || "EcoCourier Express (100% Electric)",
+      estimatedDelivery: estimatedDelivery || "Arriving Tomorrow by 5:00 PM",
+      address: address || "Flat 402, Green Meadows, Bengaluru, 560034",
+      customer: customerName,
+      buyerId: req.body?.buyerId || userId,
       userId: userId,
+      buyerEmail: userEmail,
+      listingId: listingId,
     });
+
+    // Mark listing as sold in MongoDB if listingId is provided
+    if (listingId) {
+      await Listing.findOneAndUpdate(
+        { id: listingId },
+        { $set: { sold: true } }
+      ).catch((err) => console.warn("Notice: listing sold status update:", err.message));
+    }
 
     // Update impact stats in MongoDB for this specific user
     await Impact.findOneAndUpdate(
       { userId },
       { $inc: { items: 1, co2: calcCo2, water: calcWater, money: calcSavings } },
       { upsert: true }
-    );
+    ).catch(() => {});
 
     // Create notification in MongoDB for this specific user
     await Notification.create({
@@ -180,10 +211,18 @@ router.post("/", async (req, res) => {
       text: `Order ${orderId} placed for "${item}" · Saved ${calcSavings}₹ vs retail!`,
       time: "Just now",
       read: false,
-    });
+    }).catch(() => {});
 
+    // Broadcast new order via Socket.IO
+    const io = req.app.get("io");
+    if (io) {
+      io.emit("order_created", newOrder);
+    }
+
+    console.log(`📦 MongoDB Order created: ${orderId} for "${item}" (${numPrice}₹)`);
     res.status(201).json(newOrder);
   } catch (error) {
+    console.error("Order creation error:", error);
     res.status(400).json({ error: error.message });
   }
 });

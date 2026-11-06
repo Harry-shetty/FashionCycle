@@ -220,3 +220,4 @@ export function useLeaderboard(period: LeaderboardPeriod = "month") {
     isDemo,
   };
 }
+

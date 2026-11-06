@@ -36,7 +36,7 @@ export default function PaymentPage() {
   if (isSeller) {
     return <Navigate to="/listings" replace />;
   }
-  const { listings, placeOrder, showToast } = useStore();
+  const { listings, placeOrder, updateListingStatus, showToast } = useStore();
 
   // Resolve item from navigation state or fallback to first active listing
   const item: PaymentItemState = useMemo(() => {
@@ -164,18 +164,26 @@ export default function PaymentPage() {
 
       setTimeout(async () => {
         try {
-          await placeOrder({
+          const fullAddress = `${shippingStreet}, ${shippingCity}, ${shippingState} - ${shippingPin}`;
+          const placedOrder = await placeOrder({
             title: item.title,
             price: item.price,
             img: item.img,
             seller: item.seller || `${item.brand || "Vintage"} Collective`,
+            address: fullAddress,
+            listingId: item.id,
+            customer: shippingName || user?.name || "Harsha Shetty",
           });
 
-          const mockOrderId = `#FC-${Math.floor(1000 + Math.random() * 9000)}`;
-          setCompletedOrderId(mockOrderId);
+          // Mark listing as sold so it no longer shows available
+          if (item.id) {
+            updateListingStatus(item.id, true).catch(() => {});
+          }
+
+          setCompletedOrderId(placedOrder.id);
           setIsProcessing(false);
           setOrderSuccess(true);
-          showToast(`Payment successful! Order placed and synced with MongoDB.`, "success");
+          showToast(`Payment successful! Order placed and recorded in MongoDB.`, "success");
         } catch (err) {
           console.error("Order error:", err);
           setIsProcessing(false);
@@ -292,20 +300,24 @@ export default function PaymentPage() {
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem", fontSize: "0.8rem", fontFamily: "var(--font-mono)", color: "var(--muted)", borderTop: "1px solid var(--border)", paddingTop: "1rem" }}>
                 <div>
+                  <span style={{ display: "block", color: "var(--muted)", fontSize: "0.68rem" }}>ORDER REFERENCE</span>
+                  <span style={{ color: "var(--accent)", fontWeight: 700 }}>{completedOrderId || "#FC-CONFIRMED"}</span>
+                </div>
+                <div>
                   <span style={{ display: "block", color: "var(--muted)", fontSize: "0.68rem" }}>PAYMENT METHOD</span>
                   <span style={{ color: "var(--fg)", fontWeight: 600 }}>{paymentMethod === "upi" ? `UPI (${selectedUpiApp.toUpperCase()})` : `Card (${cardBrand})`}</span>
                 </div>
                 <div>
                   <span style={{ display: "block", color: "var(--muted)", fontSize: "0.68rem" }}>DELIVERY STATUS</span>
-                  <span style={{ color: "#fbbf24", fontWeight: 600 }}>● Dispatch Processing</span>
+                  <span style={{ color: "#fbbf24", fontWeight: 600 }}>● Dispatch Processing (EcoCourier)</span>
                 </div>
                 <div>
                   <span style={{ display: "block", color: "var(--muted)", fontSize: "0.68rem" }}>SHIPPING TO</span>
                   <span style={{ color: "var(--fg)", fontWeight: 600 }}>{shippingCity}, {shippingPin}</span>
                 </div>
-                <div>
+                <div style={{ gridColumn: "1 / -1", paddingTop: "0.25rem", borderTop: "1px dashed rgba(255,255,255,0.06)" }}>
                   <span style={{ display: "block", color: "var(--muted)", fontSize: "0.68rem" }}>CIRCULAR SAVINGS</span>
-                  <span style={{ color: "var(--accent)", fontWeight: 600 }}>🌱 3.8 kg CO₂ Diverted</span>
+                  <span style={{ color: "var(--accent)", fontWeight: 600 }}>🌱 7.4 kg CO₂ Diverted · 1,580L Water Conserved · MongoDB Synced</span>
                 </div>
               </div>
             </div>

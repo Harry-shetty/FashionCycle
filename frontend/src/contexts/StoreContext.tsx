@@ -52,7 +52,15 @@ interface StoreContextType {
   
   // Orders
   orders: OrderItem[];
-  placeOrder: (item: { title: string; price: number; img: string; seller?: string }) => Promise<void>;
+  placeOrder: (item: {
+    title: string;
+    price: number;
+    img: string;
+    seller?: string;
+    address?: string;
+    listingId?: string;
+    customer?: string;
+  }) => Promise<OrderItem>;
   cancelOrder: (orderId: string) => Promise<void>;
   clearAllOrders: () => Promise<void>;
 
@@ -715,11 +723,23 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       );
     };
 
+    const handleOrderCreated = (newOrder: OrderItem) => {
+      if (!newOrder || !newOrder.id) return;
+      setOrders((prev) => {
+        if (prev.some((o) => o.id === newOrder.id)) return prev;
+        const next = [newOrder, ...prev];
+        const currentUid = user?.id || "default";
+        localStorage.setItem(`fc_orders_${currentUid}`, JSON.stringify(next));
+        return next;
+      });
+    };
+
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("users_online", handleUsersOnline);
     socket.on("listing_created", handleListingCreated);
     socket.on("order_cancelled", handleOrderCancelled);
+    socket.on("order_created", handleOrderCreated);
 
     return () => {
       socket.off("connect", onConnect);
@@ -727,6 +747,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       socket.off("users_online", handleUsersOnline);
       socket.off("listing_created", handleListingCreated);
       socket.off("order_cancelled", handleOrderCancelled);
+      socket.off("order_created", handleOrderCreated);
     };
   }, []);
 
@@ -829,7 +850,15 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const placeOrder = async (item: { title: string; price: number; img: string; seller?: string }) => {
+  const placeOrder = async (item: {
+    title: string;
+    price: number;
+    img: string;
+    seller?: string;
+    address?: string;
+    listingId?: string;
+    customer?: string;
+  }): Promise<OrderItem> => {
     const isHarsha = user?.email === "harsha@gmail.com" || user?.id === "usr-buyer-harsha";
     const savingsToAdd = Math.round(item.price * 1.4);
     
@@ -844,10 +873,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify({
           buyerId: user?.id || "guest",
           userId: user?.id || "guest",
+          buyerEmail: user?.email,
+          customer: item.customer || user?.name || "Valued Buyer",
           item: item.title,
           price: item.price,
           img: item.img,
           seller: item.seller,
+          address: item.address || "Flat 402, Green Meadows, Bengaluru, 560034",
+          listingId: item.listingId,
           savings: savingsToAdd,
           co2: co2ToAdd,
           water: waterToAdd,
@@ -855,9 +888,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       });
 
       const orderItem: OrderItem = created || {
-        id: `#FC-${Math.floor(1000 + Math.random() * 9000)}`,
+        id: `#FC-${Math.floor(10000 + Math.random() * 90000)}`,
         item: item.title,
         seller: item.seller || "FashionCycle Verified Seller",
+        customer: item.customer || user?.name || "Valued Buyer",
         date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
         price: item.price,
         status: "In Transit",
@@ -865,7 +899,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         trackingNumber: `FC-IND-${Math.floor(1000000 + Math.random() * 9000000)}`,
         carrier: "EcoCourier Express (100% Electric)",
         estimatedDelivery: "Arriving Tomorrow by 5:00 PM",
-        address: "Flat 402, Green Meadows, Bengaluru, 560034",
+        address: item.address || "Flat 402, Green Meadows, Bengaluru, 560034",
       };
 
       setOrders((prev) => {
@@ -894,12 +928,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       });
 
       showToast(`Order placed for "${item.title}"! +${savingsToAdd}₹ savings vs retail 🌱`);
+      return orderItem;
     } catch (err) {
       console.error("MongoDB order error (using local fallback):", err);
       const fallbackOrder: OrderItem = {
-        id: `#FC-${Math.floor(1000 + Math.random() * 9000)}`,
+        id: `#FC-${Math.floor(10000 + Math.random() * 90000)}`,
         item: item.title,
         seller: item.seller || "FashionCycle Verified Seller",
+        customer: item.customer || user?.name || "Valued Buyer",
         date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
         price: item.price,
         status: "In Transit",
@@ -907,7 +943,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         trackingNumber: `FC-IND-${Math.floor(1000000 + Math.random() * 9000000)}`,
         carrier: "EcoCourier Express (100% Electric)",
         estimatedDelivery: "Arriving Tomorrow by 5:00 PM",
-        address: "Flat 402, Green Meadows, Bengaluru, 560034",
+        address: item.address || "Flat 402, Green Meadows, Bengaluru, 560034",
       };
       setOrders((prev) => {
         const nextOrders = [fallbackOrder, ...prev.filter((o) => o.id !== fallbackOrder.id)];
@@ -933,6 +969,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         return updatedImpact;
       });
       showToast(`Order placed for "${item.title}"! +${savingsToAdd}₹ savings vs retail 🌱`);
+      return fallbackOrder;
     }
   };
 
