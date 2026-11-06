@@ -13,7 +13,7 @@ const statusColor: Record<string, string> = {
 
 export default function OrdersPage() {
   useReveal();
-  const { orders, openOrderTrackingModal, cancelOrder } = useStore();
+  const { orders, openOrderTrackingModal, requestCancelOrder } = useStore();
   const { isSeller } = useAuth();
   const [filter, setFilter] = useState<string>("all");
 
@@ -273,7 +273,7 @@ export default function OrdersPage() {
 
                   {order.status !== "Delivered" && (
                     <button
-                      onClick={() => cancelOrder(order.id)}
+                      onClick={() => requestCancelOrder(order)}
                       style={{
                         background: "transparent",
                         border: "1px solid var(--border)",

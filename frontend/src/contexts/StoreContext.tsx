@@ -100,6 +100,11 @@ interface StoreContextType {
   openOrderTrackingModal: (order: OrderItem) => void;
   closeOrderTrackingModal: () => void;
 
+  orderToCancel: OrderItem | null;
+  requestCancelOrder: (order: OrderItem) => void;
+  closeCancelOrderModal: () => void;
+  confirmCancelOrder: () => Promise<void>;
+
   // Toast
   toasts: Toast[];
   showToast: (message: string, type?: "success" | "info" | "error") => void;
@@ -535,6 +540,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [isNewListingModalOpen, setIsNewListingModalOpen] = useState(false);
   const [selectedItemForModal, setSelectedItemForModal] = useState<Listing | null>(null);
   const [selectedOrderForTracking, setSelectedOrderForTracking] = useState<OrderItem | null>(null);
+  const [orderToCancel, setOrderToCancel] = useState<OrderItem | null>(null);
 
   // Toasts
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -1045,6 +1051,21 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const requestCancelOrder = (order: OrderItem) => {
+    setOrderToCancel(order);
+  };
+
+  const closeCancelOrderModal = () => {
+    setOrderToCancel(null);
+  };
+
+  const confirmCancelOrder = async () => {
+    if (!orderToCancel) return;
+    const target = orderToCancel;
+    setOrderToCancel(null);
+    await cancelOrder(target.id);
+  };
+
 
 
   const toggleSave = async (id: string) => {
@@ -1284,6 +1305,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         selectedOrderForTracking,
         openOrderTrackingModal: (order) => setSelectedOrderForTracking(order),
         closeOrderTrackingModal: () => setSelectedOrderForTracking(null),
+        orderToCancel,
+        requestCancelOrder,
+        closeCancelOrderModal,
+        confirmCancelOrder,
         toasts,
         showToast,
         removeToast,

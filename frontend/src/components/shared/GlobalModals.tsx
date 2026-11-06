@@ -28,6 +28,10 @@ export default function GlobalModals() {
     toggleSave,
     selectedOrderForTracking,
     closeOrderTrackingModal,
+    orderToCancel,
+    requestCancelOrder,
+    closeCancelOrderModal,
+    confirmCancelOrder,
     cancelOrder,
     showToast,
   } = useStore();
@@ -1027,8 +1031,9 @@ export default function GlobalModals() {
               {selectedOrderForTracking.status !== "Delivered" && (
                 <button
                   onClick={() => {
-                    cancelOrder(selectedOrderForTracking.id);
+                    const order = selectedOrderForTracking;
                     closeOrderTrackingModal();
+                    requestCancelOrder(order);
                   }}
                   style={{
                     flex: 1,
@@ -1060,6 +1065,257 @@ export default function GlobalModals() {
                 }}
               >
                 Close Tracking
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 4. CANCEL ORDER CONFIRMATION MODAL */}
+      {orderToCancel && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          onClick={closeCancelOrderModal}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.85)",
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+            zIndex: 100000,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "1rem",
+            animation: "fadeIn 0.2s ease-out",
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: "var(--card-bg)",
+              border: "1px solid rgba(239, 68, 68, 0.4)",
+              boxShadow: "0 25px 60px -15px rgba(239, 68, 68, 0.2), 0 0 40px rgba(0,0,0,0.8)",
+              borderRadius: "24px",
+              padding: "2rem",
+              width: "100%",
+              maxWidth: "480px",
+              position: "relative",
+              color: "var(--fg)",
+            }}
+          >
+            {/* Header Badge & Close button */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.25rem" }}>
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.72rem",
+                  letterSpacing: "0.08em",
+                  color: "#ef4444",
+                  background: "rgba(239, 68, 68, 0.12)",
+                  border: "1px solid rgba(239, 68, 68, 0.3)",
+                  borderRadius: "100px",
+                  padding: "0.35rem 0.85rem",
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                }}
+              >
+                <span>⚠️</span>
+                <span>Confirm Order Cancellation</span>
+              </div>
+              <button
+                onClick={closeCancelOrderModal}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  color: "var(--muted)",
+                  fontSize: "1.3rem",
+                  lineHeight: 1,
+                  cursor: "pointer",
+                  padding: "0.25rem",
+                  borderRadius: "8px",
+                }}
+                aria-label="Close"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Title & prompt */}
+            <h3
+              style={{
+                fontFamily: "var(--font-heading)",
+                fontSize: "1.35rem",
+                fontWeight: 700,
+                marginBottom: "0.5rem",
+                color: "var(--fg)",
+                letterSpacing: "-0.01em",
+              }}
+            >
+              Are you sure you want to cancel?
+            </h3>
+            <p
+              style={{
+                fontFamily: "var(--font-body)",
+                fontSize: "0.88rem",
+                color: "var(--muted)",
+                lineHeight: 1.5,
+                marginBottom: "1.25rem",
+              }}
+            >
+              This order will be permanently stopped. Your refund of{" "}
+              <strong style={{ color: "var(--fg)" }}>₹{orderToCancel.price}</strong> will be
+              automatically routed back to your original payment method.
+            </p>
+
+            {/* Order Preview Card */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "1rem",
+                background: "rgba(255, 255, 255, 0.03)",
+                border: "1px solid var(--border)",
+                borderRadius: "16px",
+                padding: "0.9rem",
+                marginBottom: "1.25rem",
+              }}
+            >
+              {orderToCancel.image ? (
+                <img
+                  src={orderToCancel.image}
+                  alt={orderToCancel.title}
+                  style={{
+                    width: "56px",
+                    height: "56px",
+                    borderRadius: "10px",
+                    objectFit: "cover",
+                    flexShrink: 0,
+                    border: "1px solid var(--border)",
+                  }}
+                />
+              ) : (
+                <div
+                  style={{
+                    width: "56px",
+                    height: "56px",
+                    borderRadius: "10px",
+                    background: "rgba(255,255,255,0.06)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "1.5rem",
+                    flexShrink: 0,
+                  }}
+                >
+                  📦
+                </div>
+              )}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div
+                  style={{
+                    fontFamily: "var(--font-body)",
+                    fontWeight: 600,
+                    fontSize: "0.92rem",
+                    color: "var(--fg)",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {orderToCancel.title}
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "0.75rem",
+                    marginTop: "0.25rem",
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "0.75rem",
+                    color: "var(--muted)",
+                  }}
+                >
+                  <span>Order {orderToCancel.id}</span>
+                  <span>•</span>
+                  <span style={{ color: "var(--accent)", fontWeight: 700 }}>₹{orderToCancel.price}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Impact & Notice */}
+            <div
+              style={{
+                background: "rgba(239, 68, 68, 0.06)",
+                border: "1px dashed rgba(239, 68, 68, 0.25)",
+                borderRadius: "12px",
+                padding: "0.75rem 1rem",
+                marginBottom: "1.5rem",
+                fontSize: "0.78rem",
+                color: "var(--muted)",
+                lineHeight: 1.45,
+              }}
+            >
+              <strong style={{ color: "#ef4444" }}>Notice:</strong> Circular impact metrics (CO₂ and water saved) credited for this order will be reversed in your profile and leaderboard stats.
+            </div>
+
+            {/* Buttons */}
+            <div style={{ display: "flex", gap: "0.75rem" }}>
+              <button
+                type="button"
+                onClick={closeCancelOrderModal}
+                style={{
+                  flex: 1,
+                  background: "rgba(255, 255, 255, 0.06)",
+                  border: "1px solid var(--border)",
+                  color: "var(--fg)",
+                  borderRadius: "100px",
+                  padding: "0.8rem 1rem",
+                  fontWeight: 600,
+                  fontSize: "0.85rem",
+                  cursor: "pointer",
+                  transition: "background 0.2s, transform 0.15s",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "rgba(255, 255, 255, 0.12)";
+                  e.currentTarget.style.transform = "translateY(-1px)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "rgba(255, 255, 255, 0.06)";
+                  e.currentTarget.style.transform = "translateY(0)";
+                }}
+              >
+                Keep Order
+              </button>
+              <button
+                type="button"
+                onClick={() => confirmCancelOrder()}
+                style={{
+                  flex: 1.2,
+                  background: "#ef4444",
+                  border: "none",
+                  color: "#ffffff",
+                  borderRadius: "100px",
+                  padding: "0.8rem 1rem",
+                  fontWeight: 700,
+                  fontSize: "0.85rem",
+                  cursor: "pointer",
+                  boxShadow: "0 4px 14px rgba(239, 68, 68, 0.35)",
+                  transition: "transform 0.15s, opacity 0.2s",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.opacity = "0.92";
+                  e.currentTarget.style.transform = "translateY(-1px)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.opacity = "1";
+                  e.currentTarget.style.transform = "translateY(0)";
+                }}
+              >
+                Yes, Cancel Order
               </button>
             </div>
           </div>
