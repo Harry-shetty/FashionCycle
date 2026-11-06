@@ -419,7 +419,15 @@ function WelcomeBanner() {
             }}
           >
             {/* Top row: Status Badge & Floating Animated Icon */}
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.9rem", gap: "8px" }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginBottom: "0.95rem",
+                gap: "10px",
+              }}
+            >
               <span
                 style={{
                   fontFamily: "var(--font-mono)",
@@ -427,7 +435,7 @@ function WelcomeBanner() {
                   color: cardItem.badgeColor,
                   background: cardItem.badgeBg,
                   border: `1px solid ${cardItem.badgeColor}40`,
-                  padding: "3px 8px",
+                  padding: "3px 9px",
                   borderRadius: "100px",
                   letterSpacing: "0.05em",
                   fontWeight: 700,
@@ -440,7 +448,12 @@ function WelcomeBanner() {
               </span>
               <span
                 style={{
-                  fontSize: "1.28rem",
+                  width: "30px",
+                  height: "30px",
+                  borderRadius: "10px",
+                  background: "rgba(255,255,255,0.05)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  fontSize: "1.05rem",
                   lineHeight: 1,
                   display: "inline-flex",
                   alignItems: "center",
@@ -448,7 +461,7 @@ function WelcomeBanner() {
                   flexShrink: 0,
                   animation: "float-gentle 3.2s ease-in-out infinite",
                   animationDelay: `${idx * 0.4}s`,
-                  filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.35))",
+                  filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.3))",
                 }}
               >
                 {cardItem.icon}

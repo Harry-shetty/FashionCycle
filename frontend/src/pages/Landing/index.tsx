@@ -17,15 +17,6 @@ export default function LandingPage() {
     return <Navigate to="/home" replace />;
   }
 
-  return (
-    <>
-      <Hero />
-      <HowItWorks />
-      <FeaturedItems />
-      <ImpactBanner />
-      <Categories />
-      <Community />
-      <CTASection />
-    </>
-  );
+  // Whenever the website is loaded in the beginning, ask to sign in
+  return <Navigate to="/login" replace />;
 }

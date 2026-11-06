@@ -75,6 +75,11 @@ const PRESET_SELLER: User = {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(() => {
     try {
+      // Require an active session in sessionStorage so fresh opens of the website always ask to sign in
+      const isSessionActive = sessionStorage.getItem("fc_session_active") === "true";
+      if (!isSessionActive) {
+        return null;
+      }
       const saved = localStorage.getItem("fc_user");
       if (saved) {
         const parsed = JSON.parse(saved);
@@ -89,6 +94,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   });
 
   const [token, setToken] = useState<string | null>(() => {
+    const isSessionActive = sessionStorage.getItem("fc_session_active") === "true";
+    if (!isSessionActive) {
+      return null;
+    }
     return localStorage.getItem("fc_token") || null;
   });
 
@@ -96,6 +105,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthReady, setIsAuthReady] = useState(false);
 
   useEffect(() => {
+    const isSessionActive = sessionStorage.getItem("fc_session_active") === "true";
+    if (!isSessionActive) {
+      // Fresh open of website: ensure we start signed out
+      localStorage.removeItem("fc_user");
+      localStorage.removeItem("fc_token");
+      signOut(auth).catch(() => {});
+      setUser(null);
+      setToken(null);
+      setIsAuthReady(true);
+      return;
+    }
+
     // Safety timer: ensure isAuthReady becomes true even if Firebase Auth network hangs
     const safetyTimer = setTimeout(() => {
       setIsAuthReady(true);
@@ -104,6 +125,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
         clearTimeout(safetyTimer);
+        const stillSessionActive = sessionStorage.getItem("fc_session_active") === "true";
+        if (!stillSessionActive) {
+          setUser(null);
+          setToken(null);
+          setIsAuthReady(true);
+          return;
+        }
+
         if (firebaseUser) {
           try {
             const idToken = await firebaseUser.getIdToken();
@@ -232,6 +261,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         co2Saved: isSellerAccount ? 74.2 : 48.4,
       };
 
+      sessionStorage.setItem("fc_session_active", "true");
       setUser(loggedInUser);
       localStorage.setItem("fc_user", JSON.stringify(loggedInUser));
     } catch (error: any) {
@@ -311,6 +341,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         co2Saved: 0,
       };
 
+      sessionStorage.setItem("fc_session_active", "true");
       setUser(registeredUser);
       localStorage.setItem("fc_user", JSON.stringify(registeredUser));
 
@@ -358,6 +389,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const loginAsDemo = useCallback((name?: string, demoRole: UserRole = "buyer") => {
+    sessionStorage.setItem("fc_session_active", "true");
     const base = demoRole === "seller" ? MOCK_SELLER_USER : MOCK_BUYER_USER;
     const demoUser: User = {
       ...base,
@@ -385,6 +417,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     // 1. Immediately and synchronously clear local authentication state
+    sessionStorage.removeItem("fc_session_active");
     setUser(null);
     setToken(null);
     localStorage.removeItem("fc_user");

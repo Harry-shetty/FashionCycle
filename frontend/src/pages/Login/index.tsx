@@ -9,8 +9,8 @@ export default function LoginPage() {
   const { showToast } = useStore();
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("harsha@gmail.com");
-  const [password, setPassword] = useState("iambatman");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -491,6 +491,23 @@ export default function LoginPage() {
           Sign up
         </Link>
       </p>
+
+      <div style={{ textAlign: "center", marginTop: "1rem", paddingTop: "1rem", borderTop: "1px solid var(--border)" }}>
+        <Link
+          to="/shop"
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.78rem",
+            color: "var(--muted)",
+            textDecoration: "none",
+            transition: "color 0.2s",
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.color = "var(--fg)")}
+          onMouseLeave={(e) => (e.currentTarget.style.color = "var(--muted)")}
+        >
+          Explore Marketplace as Guest →
+        </Link>
+      </div>
     </div>
   );
 }
