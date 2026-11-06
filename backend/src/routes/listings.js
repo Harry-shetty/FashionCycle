@@ -2,6 +2,7 @@ import express from "express";
 import { Listing } from "../models/Listing.js";
 import { Impact } from "../models/Impact.js";
 import { Notification } from "../models/Notification.js";
+import { SEED_LISTINGS } from "../seed.js";
 
 const router = express.Router();
 
@@ -34,7 +35,10 @@ router.get("/", async (req, res) => {
     else if (sort === "newest") query = query.sort({ createdAt: -1 });
     else query = query.sort({ createdAt: -1 });
 
-    const listings = await query.exec();
+    let listings = await query.exec();
+    if ((!listings || listings.length === 0) && (!category || category === "All") && !q) {
+      listings = SEED_LISTINGS;
+    }
     res.json(listings);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -44,7 +48,10 @@ router.get("/", async (req, res) => {
 // GET /api/listings/:id
 router.get("/:id", async (req, res) => {
   try {
-    const listing = await Listing.findOne({ id: req.params.id });
+    let listing = await Listing.findOne({ id: req.params.id });
+    if (!listing) {
+      listing = SEED_LISTINGS.find((l) => l.id === req.params.id);
+    }
     if (!listing) return res.status(404).json({ error: "Listing not found" });
     res.json(listing);
   } catch (error) {

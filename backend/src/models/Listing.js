@@ -13,7 +13,18 @@ const listingSchema = new mongoose.Schema(
     },
     category: { 
       type: String, 
-      enum: ["Tops & Tees", "Outerwear", "Dresses", "Denim", "Shoes", "Accessories"], 
+      enum: [
+        "Jackets",
+        "Denim",
+        "Long Coats",
+        "Tees & Tops",
+        "Sweaters",
+        "Outerwear",
+        "Tops & Tees",
+        "Dresses",
+        "Shoes",
+        "Accessories"
+      ], 
       required: true 
     },
     price: { type: Number, required: true },

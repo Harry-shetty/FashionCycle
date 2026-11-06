@@ -1048,7 +1048,7 @@ function BuyerCuratedDrops() {
   const available = listings.filter((l) => !l.sold);
   const filtered = selectedCat === "All" ? available : available.filter((l) => l.category === selectedCat);
 
-  const categories = ["All", "Outerwear", "Dresses", "Tops & Tees", "Denim", "Shoes"];
+  const categories = ["All", "Jackets", "Denim", "Long Coats", "Tees & Tops", "Sweaters"];
 
   return (
     <div className="card-pad" style={{ ...card, padding: "1.75rem", marginBottom: "1.5rem", opacity: 1 }}>

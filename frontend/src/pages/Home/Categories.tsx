@@ -2,24 +2,29 @@ import { useNavigate } from "react-router-dom";
 
 const cats = [
   {
-    label: "Tops & Tees",
-    count: "24,800",
-    img: "https://images.unsplash.com/photo-1637228393246-c38a4b3d2011?w=600&h=400&fit=crop&auto=format",
-  },
-  {
-    label: "Outerwear",
-    count: "8,400",
-    img: "https://images.unsplash.com/photo-1619161519929-befcb28d6384?w=600&h=400&fit=crop&auto=format",
-  },
-  {
-    label: "Dresses",
-    count: "18,600",
-    img: "https://images.unsplash.com/photo-1624192647570-1131acc12ccf?w=600&h=400&fit=crop&auto=format",
+    label: "Jackets",
+    count: "14,200",
+    img: "https://images.unsplash.com/photo-1629511565591-a1d494ad6c58?w=600&h=400&fit=crop&auto=format",
   },
   {
     label: "Denim",
-    count: "11,200",
+    count: "18,400",
     img: "https://images.unsplash.com/photo-1642359730306-4e80ff12ff6d?w=600&h=400&fit=crop&auto=format",
+  },
+  {
+    label: "Long Coats",
+    count: "9,600",
+    img: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=600&h=400&fit=crop&auto=format",
+  },
+  {
+    label: "Tees & Tops",
+    count: "24,800",
+    img: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=600&h=400&fit=crop&auto=format",
+  },
+  {
+    label: "Sweaters",
+    count: "16,100",
+    img: "https://images.unsplash.com/photo-1589351189946-b8eb5e170ba6?w=600&h=400&fit=crop&auto=format",
   },
 ];
 
@@ -54,7 +59,7 @@ export default function Categories() {
           </h2>
         </div>
 
-        <div className="two-col-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
+        <div className="two-col-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.5rem" }}>
           {cats.map((cat, i) => (
             <div
               key={cat.label}

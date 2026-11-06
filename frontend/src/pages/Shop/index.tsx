@@ -14,12 +14,11 @@ const conditionColor: Record<string, string> = {
 
 const CATEGORIES: string[] = [
   "All",
-  "Tops & Tees",
-  "Outerwear",
-  "Dresses",
+  "Jackets",
   "Denim",
-  "Shoes",
-  "Accessories",
+  "Long Coats",
+  "Tees & Tops",
+  "Sweaters",
 ];
 
 const CONDITIONS: string[] = ["All", "Like New", "Excellent", "Good", "Fair"];

@@ -1,10 +1,14 @@
 export type Condition = "Like New" | "Excellent" | "Good" | "Fair";
 
 export type Category =
-  | "Tops & Tees"
-  | "Outerwear"
-  | "Dresses"
+  | "Jackets"
   | "Denim"
+  | "Long Coats"
+  | "Tees & Tops"
+  | "Sweaters"
+  | "Outerwear"
+  | "Tops & Tees"
+  | "Dresses"
   | "Shoes"
   | "Accessories";
 

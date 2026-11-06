@@ -14,12 +14,11 @@ const conditionColor: Record<string, string> = {
 
 const CATEGORIES = [
   "All",
-  "Tops & Tees",
-  "Outerwear",
-  "Dresses",
+  "Jackets",
   "Denim",
-  "Shoes",
-  "Accessories",
+  "Long Coats",
+  "Tees & Tops",
+  "Sweaters",
 ];
 
 interface BackendSavedItem {

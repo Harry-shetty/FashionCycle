@@ -5,12 +5,11 @@ import { useAuth } from "../../hooks/useAuth";
 import type { Category, Condition } from "../../types/listing.types";
 
 const CATEGORIES: Category[] = [
-  "Tops & Tees",
-  "Outerwear",
-  "Dresses",
+  "Jackets",
   "Denim",
-  "Shoes",
-  "Accessories",
+  "Long Coats",
+  "Tees & Tops",
+  "Sweaters",
 ];
 
 const CONDITIONS: Condition[] = ["Like New", "Excellent", "Good", "Fair"];
