@@ -164,9 +164,9 @@ function WelcomeBanner() {
       className="rv welcome-banner-content"
       style={{
         ...card,
-        background: "radial-gradient(ellipse at 85% 20%, rgba(138,223,122,0.15) 0%, rgba(13,31,13,0.85) 45%, #0d140e 100%)",
-        border: "1px solid rgba(138,223,122,0.25)",
-        boxShadow: "0 24px 60px -15px rgba(0,0,0,0.7), 0 0 35px rgba(138,223,122,0.06)",
+        background: "var(--card-bg)",
+        border: "1px solid var(--border)",
+        boxShadow: "0 20px 45px -10px rgba(0,0,0,0.5)",
         borderRadius: "24px",
         padding: "2.5rem 2.75rem",
         display: "flex",
@@ -178,38 +178,8 @@ function WelcomeBanner() {
         marginBottom: "2rem",
       }}
     >
-      {/* Floating Animated Ambient Glow Orbs */}
-      <div
-        style={{
-          position: "absolute",
-          right: -40,
-          top: -40,
-          width: 320,
-          height: 320,
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(138,223,122,0.18) 0%, transparent 65%)",
-          filter: "blur(30px)",
-          pointerEvents: "none",
-          animation: "float 7s ease-in-out infinite",
-        }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          left: "25%",
-          bottom: -60,
-          width: 240,
-          height: 240,
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(200,245,100,0.1) 0%, transparent 70%)",
-          filter: "blur(40px)",
-          pointerEvents: "none",
-          animation: "float-gentle 9s ease-in-out infinite alternate",
-        }}
-      />
-
       {/* Left Column: Greeting, Main Headline & Subtext */}
-      <div style={{ position: "relative", zIndex: 1, maxWidth: "560px" }}>
+      <div style={{ position: "relative", zIndex: 1, maxWidth: "560px", flex: 1 }}>
         {/* Pulsing Status Tag */}
         <div
           style={{
@@ -261,20 +231,20 @@ function WelcomeBanner() {
           style={{
             fontFamily: "var(--font-display)",
             fontSize: "clamp(2rem, 3.8vw, 3.2rem)",
-            fontWeight: 900,
-            letterSpacing: "-0.035em",
-            lineHeight: 1.08,
+            fontWeight: 800,
+            letterSpacing: "-0.03em",
+            lineHeight: 1.15,
             marginBottom: "0.85rem",
+            color: "var(--fg)",
           }}
         >
-          Your wardrobe,<br />
+          Your wardrobe,
           <span
             style={{
-              background: "linear-gradient(135deg, var(--accent) 0%, #c8f564 50%, #6ee7b7 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
+              display: "block",
+              color: "var(--accent)",
               fontStyle: "italic",
-              display: "inline-block",
+              marginTop: "0.25rem",
             }}
           >
             working for you
@@ -289,7 +259,7 @@ function WelcomeBanner() {
             color: "var(--muted)",
             lineHeight: 1.6,
             marginBottom: "1.5rem",
-            maxWidth: 480,
+            maxWidth: "520px",
           }}
         >
           {isSeller ? (
@@ -298,77 +268,144 @@ function WelcomeBanner() {
             </>
           ) : (
             <>
-              You are exploring the circular wardrobe as a <strong style={{ color: "var(--accent)" }}>Conscious Buyer</strong>, with <strong style={{ color: "var(--fg)" }}>{inTransitCount} order tracked</strong> and <strong style={{ color: "var(--accent)" }}>Rank #4 on Top Buyers Leaderboard</strong>.
+              You are exploring the circular wardrobe as a <strong style={{ color: "var(--accent)" }}>Conscious Buyer</strong>, with <strong style={{ color: "var(--fg)" }}>{inTransitCount} {inTransitCount === 1 ? "order" : "orders"} tracked</strong> and <strong style={{ color: "var(--accent)" }}>Rank {leaderboardRank !== "—" ? leaderboardRank : "#4"} on Top Buyers Leaderboard</strong>.
             </>
           )}
         </p>
 
-        {/* Quick Action Pill Buttons for Seller only */}
-        {isSeller && (
-          <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", alignItems: "center" }}>
-            <button
-              onClick={() => openNewListingModal()}
-              style={{
-                background: "var(--accent)",
-                color: "#0a0a08",
-                border: "none",
-                borderRadius: "100px",
-                padding: "0.65rem 1.4rem",
-                fontSize: "0.88rem",
-                fontWeight: 700,
-                fontFamily: "var(--font-body)",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-                boxShadow: "0 6px 20px rgba(138,223,122,0.3)",
-                transition: "transform 0.2s ease, box-shadow 0.2s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-2px) scale(1.02)";
-                e.currentTarget.style.boxShadow = "0 8px 24px rgba(138,223,122,0.45)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0) scale(1)";
-                e.currentTarget.style.boxShadow = "0 6px 20px rgba(138,223,122,0.3)";
-              }}
-            >
-              <span>+</span> List New Item (Seller)
-            </button>
+        {/* Quick Action Pill Buttons */}
+        <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", alignItems: "center" }}>
+          {isSeller ? (
+            <>
+              <button
+                onClick={() => openNewListingModal()}
+                style={{
+                  background: "var(--accent)",
+                  color: "#0a0a08",
+                  border: "none",
+                  borderRadius: "100px",
+                  padding: "0.65rem 1.4rem",
+                  fontSize: "0.88rem",
+                  fontWeight: 700,
+                  fontFamily: "var(--font-body)",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  boxShadow: "0 6px 20px rgba(138,223,122,0.3)",
+                  transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-2px) scale(1.02)";
+                  e.currentTarget.style.boxShadow = "0 8px 24px rgba(138,223,122,0.45)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0) scale(1)";
+                  e.currentTarget.style.boxShadow = "0 6px 20px rgba(138,223,122,0.3)";
+                }}
+              >
+                <span>+</span> List New Item (Seller)
+              </button>
 
-            <button
-              onClick={() => navigate("/listings")}
-              style={{
-                background: "rgba(255,255,255,0.04)",
-                color: "var(--fg)",
-                border: "1px solid var(--border)",
-                borderRadius: "100px",
-                padding: "0.65rem 1.25rem",
-                fontSize: "0.88rem",
-                fontWeight: 600,
-                fontFamily: "var(--font-body)",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-                transition: "border-color 0.2s ease, background 0.2s ease, transform 0.2s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "#facc15";
-                e.currentTarget.style.background = "rgba(234,179,8,0.08)";
-                e.currentTarget.style.transform = "translateY(-2px)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "var(--border)";
-                e.currentTarget.style.background = "rgba(255,255,255,0.04)";
-                e.currentTarget.style.transform = "translateY(0)";
-              }}
-            >
-              <span>Manage Inventory</span>
-              <span style={{ color: "#facc15" }}>→</span>
-            </button>
-          </div>
-        )}
+              <button
+                onClick={() => navigate("/listings")}
+                style={{
+                  background: "rgba(255,255,255,0.04)",
+                  color: "var(--fg)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "100px",
+                  padding: "0.65rem 1.25rem",
+                  fontSize: "0.88rem",
+                  fontWeight: 600,
+                  fontFamily: "var(--font-body)",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  transition: "border-color 0.2s ease, background 0.2s ease, transform 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "#facc15";
+                  e.currentTarget.style.background = "rgba(234,179,8,0.08)";
+                  e.currentTarget.style.transform = "translateY(-2px)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "var(--border)";
+                  e.currentTarget.style.background = "rgba(255,255,255,0.04)";
+                  e.currentTarget.style.transform = "translateY(0)";
+                }}
+              >
+                <span>Manage Inventory</span>
+                <span style={{ color: "#facc15" }}>→</span>
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => navigate("/shop")}
+                style={{
+                  background: "var(--accent)",
+                  color: "#0a0a08",
+                  border: "none",
+                  borderRadius: "100px",
+                  padding: "0.65rem 1.4rem",
+                  fontSize: "0.88rem",
+                  fontWeight: 700,
+                  fontFamily: "var(--font-body)",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  boxShadow: "0 6px 20px rgba(138,223,122,0.3)",
+                  transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-2px) scale(1.02)";
+                  e.currentTarget.style.boxShadow = "0 8px 24px rgba(138,223,122,0.45)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0) scale(1)";
+                  e.currentTarget.style.boxShadow = "0 6px 20px rgba(138,223,122,0.3)";
+                }}
+              >
+                <span>Explore Wardrobe</span>
+                <span>→</span>
+              </button>
+
+              <button
+                onClick={() => navigate("/orders")}
+                style={{
+                  background: "rgba(255,255,255,0.04)",
+                  color: "var(--fg)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "100px",
+                  padding: "0.65rem 1.25rem",
+                  fontSize: "0.88rem",
+                  fontWeight: 600,
+                  fontFamily: "var(--font-body)",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  transition: "border-color 0.2s ease, background 0.2s ease, transform 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "var(--accent)";
+                  e.currentTarget.style.background = "rgba(138,223,122,0.08)";
+                  e.currentTarget.style.transform = "translateY(-2px)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "var(--border)";
+                  e.currentTarget.style.background = "rgba(255,255,255,0.04)";
+                  e.currentTarget.style.transform = "translateY(0)";
+                }}
+              >
+                <span>Track Orders</span>
+                <span style={{ color: "var(--accent)" }}>→</span>
+              </button>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Right Column: 3 Enhanced Interactive Metric Cards */}
