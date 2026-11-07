@@ -86,66 +86,109 @@ export default function FeaturedItems() {
         >
           {curatedItems.map((item: Listing, i: number) => {
             const isSaved = savedIds.includes(item.id);
+            const img1 = item.images && item.images.length > 0 ? item.images[0] : "/products/lst-001-front.jpg";
+            const img2 = item.images && item.images.length > 1 ? item.images[1] : img1;
+
             return (
               <div
                 key={item.id}
                 className="reveal"
                 data-delay={i * 100}
                 onClick={() => navigate(`/product/${item.id}`)}
-                style={{ cursor: "pointer", position: "relative" }}
+                style={{
+                  cursor: "pointer",
+                  position: "relative",
+                  display: "flex",
+                  flexDirection: "column",
+                  height: "100%",
+                  background: "rgba(255,255,255,0.02)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "16px",
+                  padding: "0.75rem",
+                  transition: "transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s, box-shadow 0.25s",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-4px)";
+                  e.currentTarget.style.borderColor = "rgba(138,223,122,0.4)";
+                  e.currentTarget.style.boxShadow = "0 12px 28px rgba(0,0,0,0.25)";
+                  const imgSwap = e.currentTarget.querySelector(".hover-swap-img") as HTMLElement;
+                  if (imgSwap) imgSwap.style.opacity = "1";
+                  const mainImg = e.currentTarget.querySelector(".main-product-img") as HTMLElement;
+                  if (mainImg && img2 !== img1) mainImg.style.opacity = "0";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.borderColor = "var(--border)";
+                  e.currentTarget.style.boxShadow = "none";
+                  const imgSwap = e.currentTarget.querySelector(".hover-swap-img") as HTMLElement;
+                  if (imgSwap) imgSwap.style.opacity = "0";
+                  const mainImg = e.currentTarget.querySelector(".main-product-img") as HTMLElement;
+                  if (mainImg) mainImg.style.opacity = "1";
+                }}
               >
                 <div
                   style={{
                     position: "relative",
-                    aspectRatio: "3/4",
-                    borderRadius: "16px",
+                    aspectRatio: "4/5",
+                    borderRadius: "14px",
                     overflow: "hidden",
-                    marginBottom: "1rem",
-                    background: "#1a1a16",
-                    transition: "transform 0.4s cubic-bezier(0.16,1,0.3,1)",
-                  }}
-                  onMouseEnter={(e) => {
-                    const img = e.currentTarget.querySelector("img") as HTMLImageElement;
-                    if (img) img.style.transform = "scale(1.08)";
-                    const overlay = e.currentTarget.querySelector(".quick-overlay") as HTMLElement;
-                    if (overlay) overlay.style.opacity = "1";
-                  }}
-                  onMouseLeave={(e) => {
-                    const img = e.currentTarget.querySelector("img") as HTMLImageElement;
-                    if (img) img.style.transform = "scale(1)";
-                    const overlay = e.currentTarget.querySelector(".quick-overlay") as HTMLElement;
-                    if (overlay) overlay.style.opacity = "0";
+                    marginBottom: "0.85rem",
+                    background: "#f4f3ef",
                   }}
                 >
                   <img
-                    src={item.images[0]}
+                    className="main-product-img"
+                    src={img1}
                     alt={item.title}
                     style={{
+                      position: "absolute",
+                      inset: 0,
                       width: "100%",
                       height: "100%",
                       objectFit: "cover",
-                      objectPosition: "center 20%",
-                      transition: "transform 0.6s cubic-bezier(0.16,1,0.3,1)",
+                      objectPosition: "center",
+                      transition: "opacity 0.4s cubic-bezier(0.16,1,0.3,1), transform 0.6s cubic-bezier(0.16,1,0.3,1)",
                     }}
                   />
+
+                  {img2 && img2 !== img1 && (
+                    <img
+                      className="hover-swap-img"
+                      src={img2}
+                      alt={`${item.title} alternate`}
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        objectPosition: "center",
+                        opacity: 0,
+                        transition: "opacity 0.4s cubic-bezier(0.16,1,0.3,1), transform 0.6s cubic-bezier(0.16,1,0.3,1)",
+                      }}
+                    />
+                  )}
                   
-                  {/* Condition Tag */}
+                  {/* Thrift Wallet 1 of 1 Badge */}
                   <div
                     style={{
                       position: "absolute",
-                      top: "0.75rem",
-                      left: "0.75rem",
-                      background: "rgba(10,10,8,0.85)",
-                      backdropFilter: "blur(8px)",
+                      top: "0.6rem",
+                      left: "0.6rem",
+                      background: "rgba(18, 18, 16, 0.88)",
+                      backdropFilter: "blur(6px)",
                       borderRadius: "100px",
-                      padding: "0.25rem 0.75rem",
+                      padding: "3px 8px",
                       fontFamily: "var(--font-mono)",
-                      fontSize: "0.65rem",
-                      color: conditionColor[item.condition] || "var(--fg)",
-                      letterSpacing: "0.05em",
+                      fontSize: "0.58rem",
+                      fontWeight: 700,
+                      color: "#f5f4f0",
+                      letterSpacing: "0.06em",
+                      border: "1px solid rgba(255,255,255,0.14)",
+                      zIndex: 2,
                     }}
                   >
-                    {item.condition}
+                    1 OF 1 • NO RESTOCKS
                   </div>
 
                   {/* Wishlist Button */}
@@ -156,20 +199,20 @@ export default function FeaturedItems() {
                     }}
                     style={{
                       position: "absolute",
-                      top: "0.75rem",
-                      right: "0.75rem",
+                      top: "0.6rem",
+                      right: "0.6rem",
                       width: 32,
                       height: 32,
                       borderRadius: "50%",
                       border: "none",
-                      background: "rgba(10,10,8,0.75)",
+                      background: "rgba(18, 18, 16, 0.75)",
                       backdropFilter: "blur(6px)",
                       cursor: "pointer",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       fontSize: "0.95rem",
-                      color: isSaved ? "var(--accent)" : "var(--fg)",
+                      color: isSaved ? "var(--accent)" : "rgba(255,255,255,0.8)",
                       transition: "transform 0.2s",
                       zIndex: 3,
                     }}
@@ -179,65 +222,82 @@ export default function FeaturedItems() {
                     {isSaved ? "♥" : "♡"}
                   </button>
 
-                  {/* Price Tag */}
+                  {/* Category Pill */}
                   <div
                     style={{
                       position: "absolute",
-                      bottom: "0.75rem",
-                      right: "0.75rem",
-                      background: "var(--accent)",
+                      bottom: "0.6rem",
+                      left: "0.6rem",
+                      background: "rgba(255,255,255,0.9)",
+                      backdropFilter: "blur(6px)",
                       borderRadius: "100px",
-                      padding: "0.35rem 0.9rem",
-                      fontFamily: "var(--font-display)",
-                      fontSize: "0.95rem",
-                      fontWeight: 700,
-                      color: "#0a0a08",
+                      padding: "2px 8px",
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "0.62rem",
+                      fontWeight: 600,
+                      color: "#161614",
+                      zIndex: 2,
                     }}
                   >
-                    {item.price}₹
-                  </div>
-
-                  {/* Quick Action Overlay */}
-                  <div
-                    className="quick-overlay"
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      background: "rgba(10,10,8,0.4)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      opacity: 0,
-                      transition: "opacity 0.25s ease",
-                      pointerEvents: "none",
-                    }}
-                  >
-                    <span
-                      style={{
-                        background: "rgba(10,10,8,0.9)",
-                        border: "1px solid var(--accent)",
-                        color: "var(--accent)",
-                        padding: "0.5rem 1.25rem",
-                        borderRadius: "100px",
-                        fontSize: "0.8rem",
-                        fontWeight: 600,
-                        fontFamily: "var(--font-mono)",
-                        letterSpacing: "0.05em",
-                      }}
-                    >
-                      QUICK VIEW
-                    </span>
+                    {item.category}
                   </div>
                 </div>
 
-                <div
-                  style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: "0.65rem",
-                    color: "var(--muted)",
-                    letterSpacing: "0.06em",
-                    marginBottom: "0.25rem",
-                  }}
+                <div style={{ display: "flex", flexDirection: "column", flex: 1, justifyContent: "space-between" }}>
+                  <div>
+                    <div
+                      style={{
+                        fontFamily: "var(--font-mono)",
+                        fontSize: "0.65rem",
+                        color: "var(--muted)",
+                        letterSpacing: "0.06em",
+                        marginBottom: "0.25rem",
+                      }}
+                    >
+                      {item.brand} · Size {item.size} · {item.condition}
+                    </div>
+
+                    <h3
+                      style={{
+                        fontFamily: "var(--font-display)",
+                        fontSize: "0.95rem",
+                        fontWeight: 700,
+                        lineHeight: 1.3,
+                        minHeight: "2.5rem",
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                        color: "var(--fg)",
+                        marginBottom: "0.5rem",
+                      }}
+                    >
+                      {item.title}
+                    </h3>
+                  </div>
+
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto", paddingTop: "0.4rem" }}>
+                    <span style={{ fontFamily: "var(--font-display)", fontSize: "1.1rem", fontWeight: 800, color: "var(--accent)" }}>
+                      {item.price}₹
+                    </span>
+                    <span
+                      style={{
+                        fontFamily: "var(--font-mono)",
+                        fontSize: "0.62rem",
+                        color: conditionColor[item.condition] || "var(--accent)",
+                        background: "rgba(255,255,255,0.06)",
+                        padding: "2px 8px",
+                        borderRadius: "100px",
+                      }}
+                    >
+                      {item.condition}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
                 >
                   {item.brand} · Size {item.size}
                 </div>

@@ -4,32 +4,32 @@ const cats = [
   {
     label: "Jackets",
     count: "14,200",
-    img: "https://images.unsplash.com/photo-1646654793829-222c56e60300?w=800&h=600&fit=crop&auto=format",
-    position: "center 20%",
+    img: "/products/lst-006-front.jpg",
+    position: "center",
   },
   {
     label: "Denim",
     count: "18,400",
-    img: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=800&h=600&fit=crop&auto=format",
-    position: "center 30%",
+    img: "/products/lst-002-front.jpg",
+    position: "center",
   },
   {
     label: "Long Coats",
     count: "9,600",
-    img: "https://images.unsplash.com/photo-1539533113208-f6df8cc8b543?w=800&h=600&fit=crop&auto=format",
-    position: "center 15%",
+    img: "/products/lst-003-front.jpg",
+    position: "center",
   },
   {
     label: "Tees & Tops",
     count: "24,800",
-    img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&h=600&fit=crop&auto=format",
-    position: "center 20%",
+    img: "/products/lst-004-front.jpg",
+    position: "center",
   },
   {
     label: "Sweaters",
     count: "16,100",
-    img: "https://images.unsplash.com/photo-1574201635302-388dd92a4c3f?w=800&h=600&fit=crop&auto=format",
-    position: "center 25%",
+    img: "/products/lst-005-front.jpg",
+    position: "center",
   },
 ];
 

@@ -73,30 +73,32 @@ export default function ProductDetailPage() {
       const idx = parseInt(id.split("-")[1]) || 0;
       if (id.startsWith("rec-") && RECOMMENDED[idx]) {
         const r = RECOMMENDED[idx];
+        const match = listings.find((l) => l.title.toLowerCase() === r.title.toLowerCase());
         setItem({
           id,
           title: r.title,
           brand: r.brand,
           size: r.size,
           condition: (r.condition as any) || "Excellent",
-          category: "Outerwear",
+          category: match ? match.category : "Outerwear",
           price: r.price,
-          images: [r.img],
+          images: match && match.images.length > 0 ? match.images : [r.img],
           sellerId: "curated-drop",
           createdAt: new Date().toISOString(),
           sold: false,
         });
       } else if (id.startsWith("feed-") && FEED[idx]) {
         const f = FEED[idx];
+        const match = listings.find((l) => l.title.toLowerCase() === f.item.toLowerCase());
         setItem({
           id,
           title: f.item,
           brand: f.user,
           size: "M",
           condition: "Excellent",
-          category: "Outerwear",
+          category: match ? match.category : "Outerwear",
           price: f.price,
-          images: [f.img],
+          images: match && match.images.length > 0 ? match.images : [f.img],
           sellerId: f.handle,
           createdAt: new Date().toISOString(),
           sold: false,

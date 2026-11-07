@@ -1090,6 +1090,117 @@ function MyListings() {
   );
 }
 
+/* ─── Thrift Wallet Style Product Image with Hover Swap ─── */
+function ThriftProductImage({
+  images,
+  title,
+  aspectRatio = "4/5",
+  badge = "1 OF 1 • NO RESTOCKS",
+  category,
+}: {
+  images: string[];
+  title: string;
+  aspectRatio?: string;
+  badge?: string;
+  category?: string;
+}) {
+  const [hovered, setHovered] = useState(false);
+  const img1 = images && images.length > 0 ? images[0] : "/products/lst-001-front.jpg";
+  const img2 = images && images.length > 1 ? images[1] : img1;
+
+  return (
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        aspectRatio,
+        position: "relative",
+        overflow: "hidden",
+        background: "#f4f3ef",
+        borderRadius: "14px",
+      }}
+    >
+      <img
+        src={img1}
+        alt={title}
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          objectPosition: "center",
+          transition: "opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
+          opacity: hovered && img2 !== img1 ? 0 : 1,
+          transform: hovered ? "scale(1.05)" : "scale(1)",
+        }}
+      />
+      {img2 && img2 !== img1 && (
+        <img
+          src={img2}
+          alt={`${title} alternate view`}
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: "center",
+            transition: "opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
+            opacity: hovered ? 1 : 0,
+            transform: hovered ? "scale(1.05)" : "scale(1)",
+          }}
+        />
+      )}
+
+      {/* Thrift Wallet Style 1 of 1 Badge */}
+      <div
+        style={{
+          position: "absolute",
+          top: "0.55rem",
+          left: "0.55rem",
+          background: "rgba(18, 18, 16, 0.88)",
+          backdropFilter: "blur(6px)",
+          color: "#f5f4f0",
+          fontSize: "0.58rem",
+          fontFamily: "var(--font-mono)",
+          fontWeight: 700,
+          letterSpacing: "0.06em",
+          padding: "3px 8px",
+          borderRadius: "100px",
+          border: "1px solid rgba(255,255,255,0.14)",
+          zIndex: 2,
+          boxShadow: "0 2px 8px rgba(0,0,0,0.25)",
+        }}
+      >
+        {badge}
+      </div>
+
+      {category && (
+        <div
+          style={{
+            position: "absolute",
+            bottom: "0.55rem",
+            left: "0.55rem",
+            background: "rgba(255,255,255,0.9)",
+            backdropFilter: "blur(6px)",
+            color: "#161614",
+            fontSize: "0.62rem",
+            fontFamily: "var(--font-mono)",
+            fontWeight: 600,
+            padding: "2px 8px",
+            borderRadius: "100px",
+            zIndex: 2,
+            boxShadow: "0 2px 6px rgba(0,0,0,0.12)",
+          }}
+        >
+          {category}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ─── Buyer Curated Drops (Buyer Home Component) ─── */
 function BuyerCuratedDrops() {
   const { listings, openItemModal, savedIds, toggleSave } = useStore();
@@ -1184,41 +1295,31 @@ function BuyerCuratedDrops() {
                 borderRadius: "16px",
                 overflow: "hidden",
                 cursor: "pointer",
-                transition: "transform 0.2s, border-color 0.2s",
+                transition: "transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s, box-shadow 0.25s",
                 display: "flex",
                 flexDirection: "column",
+                height: "100%",
+                padding: "0.75rem",
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = "translateY(-4px)";
-                e.currentTarget.style.borderColor = "rgba(138,223,122,0.35)";
+                e.currentTarget.style.borderColor = "rgba(138,223,122,0.4)";
+                e.currentTarget.style.boxShadow = "0 12px 28px rgba(0,0,0,0.25)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = "translateY(0)";
                 e.currentTarget.style.borderColor = "var(--border)";
+                e.currentTarget.style.boxShadow = "none";
               }}
             >
-              <div style={{ aspectRatio: "4/5", position: "relative", overflow: "hidden", background: "#141410" }}>
-                <img
-                  src={item.images[0]}
-                  alt={item.title}
-                  style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 20%" }}
+              <div style={{ position: "relative" }}>
+                <ThriftProductImage
+                  images={item.images}
+                  title={item.title}
+                  aspectRatio="4/5"
+                  badge="1 OF 1 • NO RESTOCKS"
+                  category={item.category}
                 />
-                <div
-                  style={{
-                    position: "absolute",
-                    top: "0.6rem",
-                    left: "0.6rem",
-                    background: "rgba(10,10,8,0.75)",
-                    backdropFilter: "blur(6px)",
-                    borderRadius: "100px",
-                    padding: "0.2rem 0.55rem",
-                    fontFamily: "var(--font-mono)",
-                    fontSize: "0.65rem",
-                    color: "var(--muted)",
-                  }}
-                >
-                  {item.category}
-                </div>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -1226,69 +1327,82 @@ function BuyerCuratedDrops() {
                   }}
                   style={{
                     position: "absolute",
-                    top: "0.6rem",
-                    right: "0.6rem",
+                    top: "0.55rem",
+                    right: "0.55rem",
                     width: 32,
                     height: 32,
                     borderRadius: "50%",
                     border: "none",
-                    background: "rgba(10,10,8,0.75)",
+                    background: "rgba(18, 18, 16, 0.75)",
                     backdropFilter: "blur(6px)",
                     cursor: "pointer",
-                    fontSize: "0.9rem",
-                    color: savedIds.includes(item.id) ? "var(--accent)" : "var(--muted)",
+                    fontSize: "0.95rem",
+                    color: savedIds.includes(item.id) ? "var(--accent)" : "rgba(255,255,255,0.8)",
+                    zIndex: 3,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    transition: "transform 0.2s",
                   }}
+                  onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.15)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
                   title={savedIds.includes(item.id) ? "Remove from wishlist" : "Save to wishlist"}
                 >
                   {savedIds.includes(item.id) ? "♥" : "♡"}
                 </button>
-                <div
-                  style={{
-                    position: "absolute",
-                    bottom: "0.6rem",
-                    right: "0.6rem",
-                    background: "rgba(10,10,8,0.85)",
-                    borderRadius: "100px",
-                    padding: "0.25rem 0.7rem",
-                    fontFamily: "var(--font-display)",
-                    fontSize: "0.95rem",
-                    fontWeight: 800,
-                    color: "var(--accent)",
-                  }}
-                >
-                  {item.price}₹
-                </div>
               </div>
 
-              <div style={{ padding: "1rem", display: "flex", flexDirection: "column", flex: 1 }}>
-                <div style={{ fontFamily: "var(--font-display)", fontSize: "0.95rem", fontWeight: 700, marginBottom: "0.25rem", color: "var(--fg)" }}>
-                  {item.title}
-                </div>
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: "var(--muted)", marginBottom: "0.85rem" }}>
-                  {item.brand} · Size {item.size} · {item.condition}
+              <div style={{ padding: "0.85rem 0.25rem 0.25rem", display: "flex", flexDirection: "column", flex: 1, justifyContent: "space-between" }}>
+                <div>
+                  <div
+                    style={{
+                      fontFamily: "var(--font-display)",
+                      fontSize: "0.95rem",
+                      fontWeight: 700,
+                      lineHeight: 1.3,
+                      minHeight: "2.5rem",
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical",
+                      overflow: "hidden",
+                      color: "var(--fg)",
+                      marginBottom: "0.35rem",
+                    }}
+                  >
+                    {item.title}
+                  </div>
+                  <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: "var(--muted)", marginBottom: "0.85rem" }}>
+                    {item.brand} · Size {item.size} · {item.condition}
+                  </div>
                 </div>
 
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate(`/product/${item.id}`);
-                  }}
-                  style={{
-                    marginTop: "auto",
-                    width: "100%",
-                    background: "var(--accent)",
-                    color: "#0a0a08",
-                    border: "none",
-                    borderRadius: "100px",
-                    padding: "0.55rem",
-                    fontFamily: "var(--font-body)",
-                    fontSize: "0.82rem",
-                    fontWeight: 700,
-                    cursor: "pointer",
-                  }}
-                >
-                  ⚡ View & Buy ({item.price}₹)
-                </button>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem", marginTop: "auto" }}>
+                  <div style={{ fontFamily: "var(--font-display)", fontSize: "1.1rem", fontWeight: 800, color: "var(--accent)" }}>
+                    {item.price}₹
+                  </div>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/product/${item.id}`);
+                    }}
+                    style={{
+                      background: "var(--accent)",
+                      color: "#0a0a08",
+                      border: "none",
+                      borderRadius: "100px",
+                      padding: "0.45rem 1rem",
+                      fontFamily: "var(--font-body)",
+                      fontSize: "0.8rem",
+                      fontWeight: 700,
+                      cursor: "pointer",
+                      transition: "transform 0.15s ease",
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.03)")}
+                    onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                  >
+                    ⚡ View & Buy
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -1724,8 +1838,16 @@ function ActivityFeed() {
       >
         Activity Feed
       </h2>
-      <div className="four-col-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
+      <div className="four-col-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1.25rem" }}>
         {FEED.map((f, i) => {
+          const feedImagesMap: Record<string, string[]> = {
+            "Vintage Ralph Lauren Wool Blazer Jacket": ["/products/lst-001-front.jpg", "/products/lst-001-back.jpg"],
+            "Massimo Dutti Heavy Wool Long Overcoat": ["/products/lst-003-front.jpg", "/products/lst-008-front.jpg"],
+            "Acne Studios 1996 High-Rise Straight Denim": ["/products/lst-007-front.jpg", "/products/lst-002-back.jpg"],
+            "Filippa K Ribbed Fisherman Wool Sweater": ["/products/lst-005-front.jpg", "/products/lst-005-detail.jpg"],
+          };
+          const fImages = feedImagesMap[f.item] || [f.img];
+
           const mockListing: Listing = {
             id: `feed-${i}`,
             title: f.item,
@@ -1734,7 +1856,7 @@ function ActivityFeed() {
             condition: "Excellent",
             category: "Outerwear",
             price: f.price,
-            images: [f.img],
+            images: fImages,
             sellerId: f.handle,
             createdAt: new Date().toISOString(),
             sold: false,
@@ -1747,43 +1869,34 @@ function ActivityFeed() {
               className="rv-s"
               data-d={i * 80}
               onClick={() => navigate(`/product/${mockListing.id}`)}
-              style={{ cursor: "pointer" }}
+              style={{
+                cursor: "pointer",
+                display: "flex",
+                flexDirection: "column",
+                height: "100%",
+                background: "rgba(255,255,255,0.02)",
+                border: "1px solid var(--border)",
+                borderRadius: "16px",
+                padding: "0.75rem",
+                transition: "transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s, box-shadow 0.25s",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-4px)";
+                e.currentTarget.style.borderColor = "rgba(138,223,122,0.4)";
+                e.currentTarget.style.boxShadow = "0 12px 28px rgba(0,0,0,0.25)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.borderColor = "var(--border)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
             >
-              <div
-                style={{
-                  aspectRatio: "3/4",
-                  borderRadius: "14px",
-                  overflow: "hidden",
-                  position: "relative",
-                  background: "#1a1a14",
-                  marginBottom: "0.75rem",
-                }}
-                onMouseEnter={(e) => {
-                  const img = e.currentTarget.querySelector("img") as HTMLImageElement;
-                  if (img) img.style.transform = "scale(1.08)";
-                }}
-                onMouseLeave={(e) => {
-                  const img = e.currentTarget.querySelector("img") as HTMLImageElement;
-                  if (img) img.style.transform = "scale(1)";
-                }}
-              >
-                <img
-                  src={f.img}
-                  alt={f.item}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    objectPosition: "center 20%",
-                    transition: "transform 0.5s cubic-bezier(0.16,1,0.3,1)",
-                  }}
-                />
-                <div
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%)",
-                  }}
+              <div style={{ position: "relative" }}>
+                <ThriftProductImage
+                  images={fImages}
+                  title={f.item}
+                  aspectRatio="4/5"
+                  badge="1 OF 1 • NO RESTOCKS"
                 />
                 <button
                   onClick={(e) => {
@@ -1792,20 +1905,21 @@ function ActivityFeed() {
                   }}
                   style={{
                     position: "absolute",
-                    top: "0.6rem",
-                    right: "0.6rem",
+                    top: "0.55rem",
+                    right: "0.55rem",
                     width: 32,
                     height: 32,
                     borderRadius: "50%",
                     border: "none",
-                    background: "rgba(10,10,8,0.7)",
-                    backdropFilter: "blur(8px)",
+                    background: "rgba(18, 18, 16, 0.75)",
+                    backdropFilter: "blur(6px)",
                     cursor: "pointer",
-                    fontSize: "0.9rem",
+                    fontSize: "0.95rem",
+                    color: isSaved ? "var(--accent)" : "rgba(255,255,255,0.8)",
+                    zIndex: 3,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    color: isSaved ? "var(--accent)" : "var(--fg)",
                     transition: "transform 0.2s",
                   }}
                   onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.15)")}
@@ -1813,84 +1927,97 @@ function ActivityFeed() {
                 >
                   {isSaved ? "♥" : "♡"}
                 </button>
-                <div
-                  style={{
-                    position: "absolute",
-                    bottom: "0.6rem",
-                    left: "0.6rem",
-                    right: "0.6rem",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                  }}
-                >
+              </div>
+
+              <div style={{ padding: "0.85rem 0.25rem 0.25rem", display: "flex", flexDirection: "column", flex: 1, justifyContent: "space-between" }}>
+                <div>
                   <div
                     style={{
-                      width: 26,
-                      height: 26,
-                      borderRadius: "50%",
-                      background: "linear-gradient(135deg,var(--accent),var(--accent2))",
                       display: "flex",
                       alignItems: "center",
-                      justifyContent: "center",
-                      fontFamily: "var(--font-display)",
-                      fontWeight: 700,
-                      fontSize: "0.6rem",
-                      color: "#0a0a08",
-                      flexShrink: 0,
+                      gap: "0.45rem",
+                      marginBottom: "0.4rem",
                     }}
                   >
-                    {f.avatar}
+                    <div
+                      style={{
+                        width: 22,
+                        height: 22,
+                        borderRadius: "50%",
+                        background: "linear-gradient(135deg,var(--accent),var(--accent2))",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontFamily: "var(--font-display)",
+                        fontWeight: 700,
+                        fontSize: "0.55rem",
+                        color: "#0a0a08",
+                        flexShrink: 0,
+                      }}
+                    >
+                      {f.avatar}
+                    </div>
+                    <span
+                      style={{
+                        fontFamily: "var(--font-mono)",
+                        fontSize: "0.62rem",
+                        color: "var(--muted)",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {f.user} · {f.action}
+                    </span>
                   </div>
+
+                  <div
+                    style={{
+                      fontFamily: "var(--font-display)",
+                      fontSize: "0.95rem",
+                      fontWeight: 700,
+                      lineHeight: 1.3,
+                      minHeight: "2.5rem",
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical",
+                      overflow: "hidden",
+                      color: "var(--fg)",
+                      marginBottom: "0.35rem",
+                    }}
+                  >
+                    {f.item}
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    marginTop: "auto",
+                    paddingTop: "0.4rem",
+                  }}
+                >
                   <span
                     style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "0.72rem",
-                      color: "rgba(255,255,255,0.85)",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
+                      fontFamily: "var(--font-display)",
+                      fontSize: "1.05rem",
+                      fontWeight: 800,
+                      color: "var(--accent)",
                     }}
                   >
-                    {f.user}
+                    {f.price}₹
                   </span>
-                </div>
-              </div>
-              <div>
-                <div
-                  style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: "0.6rem",
-                    color: "var(--muted)",
-                    letterSpacing: "0.04em",
-                    marginBottom: "0.25rem",
-                  }}
-                >
-                  {f.action} · {f.time}
-                </div>
-                <div
-                  style={{
-                    fontFamily: "var(--font-display)",
-                    fontSize: "0.9rem",
-                    fontWeight: 600,
-                    letterSpacing: "-0.01em",
-                    marginBottom: "0.15rem",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  {f.item}
-                </div>
-                <div
-                  style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: "0.85rem",
-                    color: "var(--accent)",
-                    fontWeight: 600,
-                  }}
-                >
-                  {f.price}₹
+                  <span
+                    style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "0.62rem",
+                      color: "var(--muted)",
+                    }}
+                  >
+                    {f.time}
+                  </span>
                 </div>
               </div>
             </div>
@@ -1905,6 +2032,13 @@ function ActivityFeed() {
 function Recommended() {
   const { openItemModal, savedIds, toggleSave } = useStore();
   const navigate = useNavigate();
+
+  const recImagesMap: Record<string, string[]> = {
+    "Nanushka Vegan Leather Moto Jacket": ["/products/lst-006-front.jpg", "/products/lst-006-back.jpg"],
+    "Acne Studios 1996 High-Rise Straight Denim": ["/products/lst-007-front.jpg", "/products/lst-002-back.jpg"],
+    "Massimo Dutti Heavy Wool Long Overcoat": ["/products/lst-003-front.jpg", "/products/lst-008-front.jpg"],
+    "Loro Piana Chunky Cable-Knit Cashmere Sweater": ["/products/lst-010-front.jpg", "/products/lst-005-detail.jpg"],
+  };
 
   return (
     <div className="rv card-pad" style={{ ...card, padding: "1.75rem", marginBottom: "1.5rem" }}>
@@ -1965,8 +2099,9 @@ function Recommended() {
         </button>
       </div>
 
-      <div className="four-col-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
+      <div className="four-col-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1.25rem" }}>
         {RECOMMENDED.map((item, i) => {
+          const itemImages = recImagesMap[item.title] || [item.img];
           const mockListing: Listing = {
             id: `rec-${i}`,
             title: item.title,
@@ -1975,7 +2110,7 @@ function Recommended() {
             condition: item.condition as any,
             category: "Outerwear",
             price: item.price,
-            images: [item.img],
+            images: itemImages,
             sellerId: "curated-drop",
             createdAt: new Date().toISOString(),
             sold: false,
@@ -1988,54 +2123,35 @@ function Recommended() {
               className="rv-s"
               data-d={i * 80}
               onClick={() => navigate(`/product/${mockListing.id}`)}
-              style={{ cursor: "pointer" }}
+              style={{
+                cursor: "pointer",
+                display: "flex",
+                flexDirection: "column",
+                height: "100%",
+                background: "rgba(255,255,255,0.02)",
+                border: "1px solid var(--border)",
+                borderRadius: "16px",
+                padding: "0.75rem",
+                transition: "transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s, box-shadow 0.25s",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-4px)";
+                e.currentTarget.style.borderColor = "rgba(138,223,122,0.4)";
+                e.currentTarget.style.boxShadow = "0 12px 28px rgba(0,0,0,0.25)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.borderColor = "var(--border)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
             >
-              <div
-                style={{
-                  aspectRatio: "3/4",
-                  borderRadius: "14px",
-                  overflow: "hidden",
-                  background: "#1a1a14",
-                  marginBottom: "0.75rem",
-                  position: "relative",
-                }}
-                onMouseEnter={(e) => {
-                  const img = e.currentTarget.querySelector("img") as HTMLImageElement;
-                  if (img) img.style.transform = "scale(1.08)";
-                }}
-                onMouseLeave={(e) => {
-                  const img = e.currentTarget.querySelector("img") as HTMLImageElement;
-                  if (img) img.style.transform = "scale(1)";
-                }}
-              >
-                <img
-                  src={item.img}
-                  alt={item.title}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    objectPosition: "center 20%",
-                    transition: "transform 0.5s cubic-bezier(0.16,1,0.3,1)",
-                  }}
+              <div style={{ position: "relative" }}>
+                <ThriftProductImage
+                  images={itemImages}
+                  title={item.title}
+                  aspectRatio="4/5"
+                  badge="1 OF 1 • NO RESTOCKS"
                 />
-                <div
-                  style={{
-                    position: "absolute",
-                    top: "0.6rem",
-                    left: "0.6rem",
-                    background: "rgba(10,10,8,0.8)",
-                    backdropFilter: "blur(6px)",
-                    borderRadius: "100px",
-                    padding: "0.2rem 0.6rem",
-                    fontFamily: "var(--font-mono)",
-                    fontSize: "0.6rem",
-                    color: item.condition === "Like New" ? "var(--accent)" : "var(--fg)",
-                    letterSpacing: "0.05em",
-                  }}
-                >
-                  {item.condition}
-                </div>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -2043,19 +2159,21 @@ function Recommended() {
                   }}
                   style={{
                     position: "absolute",
-                    top: "0.5rem",
-                    right: "0.5rem",
-                    width: 30,
-                    height: 30,
+                    top: "0.55rem",
+                    right: "0.55rem",
+                    width: 32,
+                    height: 32,
                     borderRadius: "50%",
                     border: "none",
-                    background: "rgba(10,10,8,0.7)",
+                    background: "rgba(18, 18, 16, 0.75)",
+                    backdropFilter: "blur(6px)",
                     cursor: "pointer",
-                    fontSize: "0.85rem",
+                    fontSize: "0.95rem",
+                    color: isSaved ? "var(--accent)" : "rgba(255,255,255,0.8)",
+                    zIndex: 3,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    color: isSaved ? "var(--accent)" : "var(--fg)",
                     transition: "transform 0.2s",
                   }}
                   onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.15)")}
@@ -2063,46 +2181,71 @@ function Recommended() {
                 >
                   {isSaved ? "♥" : "♡"}
                 </button>
+              </div>
+
+              <div style={{ padding: "0.85rem 0.25rem 0.25rem", display: "flex", flexDirection: "column", flex: 1, justifyContent: "space-between" }}>
+                <div>
+                  <div
+                    style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "0.65rem",
+                      color: "var(--muted)",
+                      marginBottom: "0.35rem",
+                    }}
+                  >
+                    {item.brand} · Size {item.size} · {item.condition}
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: "var(--font-display)",
+                      fontSize: "0.95rem",
+                      fontWeight: 700,
+                      lineHeight: 1.3,
+                      minHeight: "2.5rem",
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical",
+                      overflow: "hidden",
+                      color: "var(--fg)",
+                      marginBottom: "0.35rem",
+                    }}
+                  >
+                    {item.title}
+                  </div>
+                </div>
+
                 <div
                   style={{
-                    position: "absolute",
-                    bottom: "0.5rem",
-                    right: "0.5rem",
-                    background: "var(--accent)",
-                    borderRadius: "100px",
-                    padding: "0.25rem 0.75rem",
-                    fontFamily: "var(--font-display)",
-                    fontSize: "0.85rem",
-                    fontWeight: 700,
-                    color: "#0a0a08",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    marginTop: "auto",
+                    paddingTop: "0.4rem",
                   }}
                 >
-                  {item.price}₹
+                  <span
+                    style={{
+                      fontFamily: "var(--font-display)",
+                      fontSize: "1.05rem",
+                      fontWeight: 800,
+                      color: "var(--accent)",
+                    }}
+                  >
+                    {item.price}₹
+                  </span>
+                  <span
+                    style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "0.6rem",
+                      color: "var(--accent)",
+                      background: "rgba(138,223,122,0.12)",
+                      padding: "2px 8px",
+                      borderRadius: "100px",
+                    }}
+                  >
+                    Vintage 1 of 1
+                  </span>
                 </div>
-              </div>
-              <div
-                style={{
-                  fontFamily: "var(--font-mono)",
-                  fontSize: "0.6rem",
-                  color: "var(--muted)",
-                  letterSpacing: "0.04em",
-                  marginBottom: "0.2rem",
-                }}
-              >
-                {item.brand} · {item.size}
-              </div>
-              <div
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: "0.9rem",
-                  fontWeight: 600,
-                  letterSpacing: "-0.01em",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
-              >
-                {item.title}
               </div>
             </div>
           );

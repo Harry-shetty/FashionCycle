@@ -407,60 +407,104 @@ export default function ShopPage() {
                   className="reveal-scale"
                   data-delay={(index % 4) * 60}
                   onClick={() => navigate(`/product/${item.id}`)}
-                  style={{ cursor: "pointer", position: "relative" }}
+                  style={{
+                    cursor: "pointer",
+                    position: "relative",
+                    display: "flex",
+                    flexDirection: "column",
+                    height: "100%",
+                    background: "rgba(255,255,255,0.02)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "16px",
+                    padding: "0.75rem",
+                    transition: "transform 0.25s cubic-bezier(0.16,1,0.3,1), border-color 0.25s, box-shadow 0.25s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-4px)";
+                    e.currentTarget.style.borderColor = "rgba(138,223,122,0.4)";
+                    e.currentTarget.style.boxShadow = "0 12px 28px rgba(0,0,0,0.25)";
+                    const imgSwap = e.currentTarget.querySelector(".shop-swap-img") as HTMLElement;
+                    if (imgSwap) imgSwap.style.opacity = "1";
+                    const mainImg = e.currentTarget.querySelector(".shop-main-img") as HTMLElement;
+                    if (mainImg && item.images.length > 1) mainImg.style.opacity = "0";
+                    const overlay = e.currentTarget.querySelector(".shop-card-hover") as HTMLElement;
+                    if (overlay) overlay.style.opacity = "1";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.borderColor = "var(--border)";
+                    e.currentTarget.style.boxShadow = "none";
+                    const imgSwap = e.currentTarget.querySelector(".shop-swap-img") as HTMLElement;
+                    if (imgSwap) imgSwap.style.opacity = "0";
+                    const mainImg = e.currentTarget.querySelector(".shop-main-img") as HTMLElement;
+                    if (mainImg) mainImg.style.opacity = "1";
+                    const overlay = e.currentTarget.querySelector(".shop-card-hover") as HTMLElement;
+                    if (overlay) overlay.style.opacity = "0";
+                  }}
                 >
                   <div
                     style={{
                       position: "relative",
-                      aspectRatio: "3/4",
-                      borderRadius: "16px",
+                      aspectRatio: "4/5",
+                      borderRadius: "14px",
                       overflow: "hidden",
-                      marginBottom: "1rem",
-                      background: "#1a1a16",
-                      transition: "transform 0.4s cubic-bezier(0.16,1,0.3,1)",
-                    }}
-                    onMouseEnter={(e) => {
-                      const img = e.currentTarget.querySelector("img") as HTMLImageElement;
-                      if (img) img.style.transform = "scale(1.08)";
-                      const overlay = e.currentTarget.querySelector(".shop-card-hover") as HTMLElement;
-                      if (overlay) overlay.style.opacity = "1";
-                    }}
-                    onMouseLeave={(e) => {
-                      const img = e.currentTarget.querySelector("img") as HTMLImageElement;
-                      if (img) img.style.transform = "scale(1)";
-                      const overlay = e.currentTarget.querySelector(".shop-card-hover") as HTMLElement;
-                      if (overlay) overlay.style.opacity = "0";
+                      marginBottom: "0.85rem",
+                      background: "#f4f3ef",
                     }}
                   >
                     <img
+                      className="shop-main-img"
                       src={item.images[0]}
                       alt={item.title}
                       style={{
+                        position: "absolute",
+                        inset: 0,
                         width: "100%",
                         height: "100%",
                         objectFit: "cover",
-                        objectPosition: "center 20%",
-                        transition: "transform 0.6s cubic-bezier(0.16,1,0.3,1)",
+                        objectPosition: "center",
+                        transition: "opacity 0.4s cubic-bezier(0.16,1,0.3,1), transform 0.6s cubic-bezier(0.16,1,0.3,1)",
                       }}
                     />
 
-                    {/* Condition badge */}
+                    {item.images.length > 1 && (
+                      <img
+                        className="shop-swap-img"
+                        src={item.images[1]}
+                        alt={`${item.title} alternate`}
+                        style={{
+                          position: "absolute",
+                          inset: 0,
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                          objectPosition: "center",
+                          opacity: 0,
+                          transition: "opacity 0.4s cubic-bezier(0.16,1,0.3,1), transform 0.6s cubic-bezier(0.16,1,0.3,1)",
+                        }}
+                      />
+                    )}
+
+                    {/* Thrift Wallet 1 OF 1 Badge */}
                     <div
                       style={{
                         position: "absolute",
-                        top: "0.75rem",
-                        left: "0.75rem",
-                        background: "rgba(10,10,8,0.85)",
-                        backdropFilter: "blur(8px)",
+                        top: "0.6rem",
+                        left: "0.6rem",
+                        background: "rgba(18, 18, 16, 0.88)",
+                        backdropFilter: "blur(6px)",
                         borderRadius: "100px",
-                        padding: "0.25rem 0.75rem",
+                        padding: "3px 8px",
                         fontFamily: "var(--font-mono)",
-                        fontSize: "0.65rem",
-                        color: conditionColor[item.condition] || "var(--fg)",
-                        letterSpacing: "0.05em",
+                        fontSize: "0.58rem",
+                        fontWeight: 700,
+                        color: "#f5f4f0",
+                        letterSpacing: "0.06em",
+                        border: "1px solid rgba(255,255,255,0.14)",
+                        zIndex: 2,
                       }}
                     >
-                      {item.condition}
+                      1 OF 1 • NO RESTOCKS
                     </div>
 
                     {/* Wishlist toggle */}
@@ -471,20 +515,20 @@ export default function ShopPage() {
                       }}
                       style={{
                         position: "absolute",
-                        top: "0.75rem",
-                        right: "0.75rem",
+                        top: "0.6rem",
+                        right: "0.6rem",
                         width: 32,
                         height: 32,
                         borderRadius: "50%",
                         border: "none",
-                        background: "rgba(10,10,8,0.75)",
+                        background: "rgba(18, 18, 16, 0.75)",
                         backdropFilter: "blur(6px)",
                         cursor: "pointer",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         fontSize: "0.95rem",
-                        color: isSaved ? "var(--accent)" : "var(--fg)",
+                        color: isSaved ? "var(--accent)" : "rgba(255,255,255,0.8)",
                         transition: "transform 0.2s",
                         zIndex: 3,
                       }}
@@ -498,15 +542,16 @@ export default function ShopPage() {
                     <div
                       style={{
                         position: "absolute",
-                        bottom: "0.75rem",
-                        right: "0.75rem",
+                        bottom: "0.6rem",
+                        right: "0.6rem",
                         background: "var(--accent)",
                         borderRadius: "100px",
-                        padding: "0.35rem 0.9rem",
+                        padding: "0.3rem 0.85rem",
                         fontFamily: "var(--font-display)",
                         fontSize: "0.95rem",
-                        fontWeight: 700,
+                        fontWeight: 800,
                         color: "#0a0a08",
+                        zIndex: 2,
                       }}
                     >
                       {item.price}₹
@@ -525,6 +570,7 @@ export default function ShopPage() {
                         opacity: 0,
                         transition: "opacity 0.25s ease",
                         pointerEvents: "none",
+                        zIndex: 2,
                       }}
                     >
                       <span
@@ -545,29 +591,55 @@ export default function ShopPage() {
                     </div>
                   </div>
 
-                  <div
-                    style={{
-                      fontFamily: "var(--font-mono)",
-                      fontSize: "0.65rem",
-                      color: "var(--muted)",
-                      letterSpacing: "0.06em",
-                      marginBottom: "0.25rem",
-                    }}
-                  >
-                    {item.brand} · Size {item.size}
-                  </div>
-                  <div
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: "1.05rem",
-                      fontWeight: 700,
-                      letterSpacing: "-0.01em",
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                    }}
-                  >
-                    {item.title}
+                  <div style={{ display: "flex", flexDirection: "column", flex: 1, justifyContent: "space-between" }}>
+                    <div>
+                      <div
+                        style={{
+                          fontFamily: "var(--font-mono)",
+                          fontSize: "0.65rem",
+                          color: "var(--muted)",
+                          letterSpacing: "0.06em",
+                          marginBottom: "0.25rem",
+                        }}
+                      >
+                        {item.brand} · Size {item.size} · {item.category}
+                      </div>
+                      <div
+                        style={{
+                          fontFamily: "var(--font-display)",
+                          fontSize: "1rem",
+                          fontWeight: 700,
+                          letterSpacing: "-0.01em",
+                          lineHeight: 1.3,
+                          minHeight: "2.6rem",
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: "vertical",
+                          overflow: "hidden",
+                          color: "var(--fg)",
+                        }}
+                      >
+                        {item.title}
+                      </div>
+                    </div>
+
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto", paddingTop: "0.4rem" }}>
+                      <span style={{ fontFamily: "var(--font-display)", fontSize: "1.1rem", fontWeight: 800, color: "var(--accent)" }}>
+                        {item.price}₹
+                      </span>
+                      <span
+                        style={{
+                          fontFamily: "var(--font-mono)",
+                          fontSize: "0.62rem",
+                          color: conditionColor[item.condition] || "var(--accent)",
+                          background: "rgba(255,255,255,0.06)",
+                          padding: "2px 8px",
+                          borderRadius: "100px",
+                        }}
+                      >
+                        {item.condition}
+                      </span>
+                    </div>
                   </div>
                 </div>
               );
