@@ -985,6 +985,7 @@ function MyListings() {
                         width: "100%",
                         height: "100%",
                         objectFit: "cover",
+                        objectPosition: "center 20%",
                         transition: "transform 0.5s cubic-bezier(0.16,1,0.3,1)",
                       }}
                       onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.08)")}
@@ -1200,7 +1201,7 @@ function BuyerCuratedDrops() {
                 <img
                   src={item.images[0]}
                   alt={item.title}
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 20%" }}
                 />
                 <div
                   style={{
@@ -1397,7 +1398,7 @@ function OrdersAndLeaderboard() {
                 <img
                   src={o.img}
                   alt={o.item}
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 20%" }}
                 />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
@@ -1773,6 +1774,7 @@ function ActivityFeed() {
                     width: "100%",
                     height: "100%",
                     objectFit: "cover",
+                    objectPosition: "center 20%",
                     transition: "transform 0.5s cubic-bezier(0.16,1,0.3,1)",
                   }}
                 />
@@ -2013,6 +2015,7 @@ function Recommended() {
                     width: "100%",
                     height: "100%",
                     objectFit: "cover",
+                    objectPosition: "center 20%",
                     transition: "transform 0.5s cubic-bezier(0.16,1,0.3,1)",
                   }}
                 />

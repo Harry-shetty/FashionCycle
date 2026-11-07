@@ -963,7 +963,7 @@ export default function GlobalModals() {
             {/* Item Card */}
             <div style={{ display: "flex", gap: "1rem", background: "rgba(255,255,255,0.03)", padding: "1rem", borderRadius: "14px", marginBottom: "1.75rem", alignItems: "center" }}>
               <div style={{ width: 56, height: 56, borderRadius: "10px", overflow: "hidden", background: "#1a1a14", flexShrink: 0 }}>
-                <img src={selectedOrderForTracking.img} alt={selectedOrderForTracking.item} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                <img src={selectedOrderForTracking.img} alt={selectedOrderForTracking.item} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 20%" }} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "0.95rem", color: "var(--fg)" }}>{selectedOrderForTracking.item}</div>
@@ -1194,6 +1194,7 @@ export default function GlobalModals() {
                     height: "56px",
                     borderRadius: "10px",
                     objectFit: "cover",
+                    objectPosition: "center 20%",
                     flexShrink: 0,
                     border: "1px solid var(--border)",
                   }}

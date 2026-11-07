@@ -124,6 +124,7 @@ export default function FeaturedItems() {
                       width: "100%",
                       height: "100%",
                       objectFit: "cover",
+                      objectPosition: "center 20%",
                       transition: "transform 0.6s cubic-bezier(0.16,1,0.3,1)",
                     }}
                   />

@@ -218,7 +218,7 @@ export default function OrdersPage() {
                     flexShrink: 0,
                   }}
                 >
-                  <img src={order.img} alt={order.item} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  <img src={order.img} alt={order.item} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 20%" }} />
                 </div>
 
                 <div style={{ flex: 1, minWidth: "220px" }}>
