@@ -20,7 +20,7 @@ export const SEED_LISTINGS = [
     condition: "Excellent",
     category: "Jackets",
     price: 85,
-    images: ["https://images.unsplash.com/photo-1629511565591-a1d494ad6c58?w=600&h=800&fit=crop&auto=format"],
+    images: ["https://images.unsplash.com/photo-1646654793829-222c56e60300?w=600&h=800&fit=crop&auto=format"],
     description: "Classic 90s tailored wool jacket with horn buttons. 100% pure virgin wool in pristine vintage condition.",
     sellerId: "seller-1",
     sold: false,
@@ -35,7 +35,7 @@ export const SEED_LISTINGS = [
     condition: "Good",
     category: "Denim",
     price: 55,
-    images: ["https://images.unsplash.com/photo-1642359730306-4e80ff12ff6d?w=600&h=800&fit=crop&auto=format"],
+    images: ["https://images.unsplash.com/photo-1582552938357-32b906df40cb?w=600&h=800&fit=crop&auto=format"],
     description: "Authentic made in USA 501s with natural vintage whiskering, straight leg and raw selvedge hem.",
     sellerId: "seller-2",
     sold: false,
@@ -50,7 +50,7 @@ export const SEED_LISTINGS = [
     condition: "Excellent",
     category: "Long Coats",
     price: 130,
-    images: ["https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=600&h=800&fit=crop&auto=format"],
+    images: ["https://images.unsplash.com/photo-1539533113208-f6df8cc8b543?w=600&h=800&fit=crop&auto=format"],
     description: "Structured double-breasted long winter coat in warm camel hue. Premium Italian wool blend tailored to perfection.",
     sellerId: "seller-3",
     sold: false,
@@ -65,7 +65,7 @@ export const SEED_LISTINGS = [
     condition: "Like New",
     category: "Tees & Tops",
     price: 45,
-    images: ["https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=600&h=800&fit=crop&auto=format"],
+    images: ["https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=600&h=800&fit=crop&auto=format"],
     description: "Heavyweight 280gsm organic combed cotton tee. Relaxed drop shoulder silhouette in optic white.",
     sellerId: "seller-4",
     sold: false,
@@ -80,7 +80,7 @@ export const SEED_LISTINGS = [
     condition: "Like New",
     category: "Sweaters",
     price: 92,
-    images: ["https://images.unsplash.com/photo-1589351189946-b8eb5e170ba6?w=600&h=800&fit=crop&auto=format"],
+    images: ["https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?w=600&h=800&fit=crop&auto=format"],
     description: "Chunky ribbed crewneck knit crafted from Scandinavian merino wool. Soft oatmeal melange hue.",
     sellerId: "seller-1",
     sold: false,
@@ -95,7 +95,7 @@ export const SEED_LISTINGS = [
     condition: "Like New",
     category: "Jackets",
     price: 195,
-    images: ["https://images.unsplash.com/photo-1613915617430-8ab0fd7c6baf?w=600&h=800&fit=crop&auto=format"],
+    images: ["https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600&h=800&fit=crop&auto=format"],
     description: "Buttery soft cruelty-free vegan leather jacket in rich espresso tone. Padded buttons and satin lining.",
     sellerId: "seller-2",
     sold: false,
@@ -125,7 +125,7 @@ export const SEED_LISTINGS = [
     condition: "Good",
     category: "Long Coats",
     price: 145,
-    images: ["https://images.unsplash.com/photo-1584216338898-f34d78201414?w=600&h=800&fit=crop&auto=format"],
+    images: ["https://images.unsplash.com/photo-1633821879282-0c4e91f96232?w=600&h=800&fit=crop&auto=format"],
     description: "Classic water-repellent organic cotton gabardine long trench with storm flap and waist tie belt.",
     sellerId: "seller-4",
     sold: false,
@@ -140,7 +140,7 @@ export const SEED_LISTINGS = [
     condition: "Like New",
     category: "Tees & Tops",
     price: 65,
-    images: ["https://images.unsplash.com/photo-1624192647570-1131acc12ccf?w=600&h=800&fit=crop&auto=format"],
+    images: ["https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=600&h=800&fit=crop&auto=format"],
     description: "Signature oversized ruffled collar blouse top in certified organic cotton seersucker pastel check.",
     sellerId: "seller-1",
     sold: false,
@@ -155,7 +155,7 @@ export const SEED_LISTINGS = [
     condition: "Excellent",
     category: "Sweaters",
     price: 240,
-    images: ["https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&h=800&fit=crop&auto=format"],
+    images: ["https://images.unsplash.com/photo-1523523262500-ec13396518c6?w=600&h=800&fit=crop&auto=format"],
     description: "Ultra-luxurious hand-finished cable knit sweater in pure Mongolian cashmere. Incredibly warm and soft.",
     sellerId: "seller-2",
     sold: false,
@@ -167,12 +167,12 @@ export const SEED_LISTINGS = [
 const SEED_ORDERS = [
   {
     id: "#FC-00412",
-    item: "Vintage Levi's 501 Original Fit",
+    item: "Vintage Levi's 501 Original Fit Denim",
     seller: "Marco R.",
     date: "Sep 8, 2026",
-    price: 54,
+    price: 55,
     status: "Delivered",
-    img: "https://images.unsplash.com/photo-1642359730306-4e80ff12ff6d?w=200&h=200&fit=crop&auto=format",
+    img: "https://images.unsplash.com/photo-1582552938357-32b906df40cb?w=400&h=400&fit=crop&auto=format",
     trackingNumber: "FC-IND-8829104",
     carrier: "EcoCourier Express (100% Electric)",
     estimatedDelivery: "Delivered on Sep 11, 2026",
@@ -180,12 +180,12 @@ const SEED_ORDERS = [
   },
   {
     id: "#FC-00398",
-    item: "Ganni Pastel Check Ruffle Blouse",
+    item: "Ganni Pastel Check Organic Cotton Top",
     seller: "Ana K.",
     date: "Sep 2, 2026",
-    price: 67,
+    price: 65,
     status: "In Transit",
-    img: "https://images.unsplash.com/photo-1624192647570-1131acc12ccf?w=200&h=200&fit=crop&auto=format",
+    img: "https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=400&h=400&fit=crop&auto=format",
     trackingNumber: "FC-IND-9912034",
     carrier: "BlueDart CarbonNeutral",
     estimatedDelivery: "Arriving Tomorrow by 5:00 PM",
@@ -193,12 +193,12 @@ const SEED_ORDERS = [
   },
   {
     id: "#FC-00371",
-    item: "Bottega Veneta Mule Heels",
+    item: "Nanushka Vegan Leather Moto Jacket",
     seller: "Lea B.",
     date: "Aug 25, 2026",
-    price: 210,
+    price: 195,
     status: "Delivered",
-    img: "https://images.unsplash.com/photo-1680690653166-1618c3bcdf51?w=200&h=200&fit=crop&auto=format",
+    img: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&h=400&fit=crop&auto=format",
     trackingNumber: "FC-IND-7734190",
     carrier: "EcoCourier Express",
     estimatedDelivery: "Delivered on Aug 28, 2026",
@@ -441,11 +441,10 @@ export async function seedDatabase() {
       console.log("🌱 Seeded buyer follows into MongoDB (db.buyer_follows)");
     }
 
-    const orderCount = await Order.countDocuments();
-    if (orderCount === 0) {
-      await Order.insertMany(SEED_ORDERS);
-      console.log("🌱 Seeded buyer orders into MongoDB (db.buyer_orders)");
+    for (const ord of SEED_ORDERS) {
+      await Order.findOneAndUpdate({ id: ord.id }, { $set: ord }, { upsert: true, new: true });
     }
+    console.log("🌱 Synced buyer orders into MongoDB (db.buyer_orders)");
 
     const savedCount = await SavedItem.countDocuments();
     if (savedCount === 0) {
@@ -527,74 +526,72 @@ export async function seedDatabase() {
     // -------------------------------------------------------------
     // HARSHA DEMO DATA SEEDING (usr-buyer-harsha / harsha@gmail.com):
     // -------------------------------------------------------------
-    const harshaOrderCount = await Order.countDocuments({
-      $or: [{ buyerId: "usr-buyer-harsha" }, { userId: "harsha@gmail.com" }, { buyerId: "harsha@gmail.com" }],
-    });
-    if (harshaOrderCount === 0) {
-      await Order.insertMany([
-        {
-          id: "#FC-00412",
-          item: "Vintage Levi's 501 Original Fit",
-          seller: "Marco R.",
-          date: "Sep 8, 2026",
-          price: 54,
-          status: "Delivered",
-          img: "https://images.unsplash.com/photo-1642359730306-4e80ff12ff6d?w=200&h=200&fit=crop&auto=format",
-          trackingNumber: "FC-IND-8829104",
-          carrier: "EcoCourier Express (100% Electric)",
-          estimatedDelivery: "Delivered on Sep 11, 2026",
-          address: "Flat 402, Green Meadows, Bengaluru, 560034",
-          buyerId: "usr-buyer-harsha",
-          userId: "harsha@gmail.com",
-        },
-        {
-          id: "#FC-00398",
-          item: "Ganni Pastel Check Ruffle Blouse",
-          seller: "Ana K.",
-          date: "Sep 2, 2026",
-          price: 67,
-          status: "In Transit",
-          img: "https://images.unsplash.com/photo-1624192647570-1131acc12ccf?w=200&h=200&fit=crop&auto=format",
-          trackingNumber: "FC-IND-9912034",
-          carrier: "BlueDart CarbonNeutral",
-          estimatedDelivery: "Arriving Tomorrow by 5:00 PM",
-          address: "Flat 402, Green Meadows, Bengaluru, 560034",
-          buyerId: "usr-buyer-harsha",
-          userId: "harsha@gmail.com",
-        },
-        {
-          id: "#FC-00371",
-          item: "Bottega Veneta Mule Heels",
-          seller: "Lea B.",
-          date: "Aug 25, 2026",
-          price: 210,
-          status: "Delivered",
-          img: "https://images.unsplash.com/photo-1680690653166-1618c3bcdf51?w=200&h=200&fit=crop&auto=format",
-          trackingNumber: "FC-IND-7734190",
-          carrier: "EcoCourier Express",
-          estimatedDelivery: "Delivered on Aug 28, 2026",
-          address: "Flat 402, Green Meadows, Bengaluru, 560034",
-          buyerId: "usr-buyer-harsha",
-          userId: "harsha@gmail.com",
-        },
-        {
-          id: "#FC-00289",
-          item: "Organic Linen Oversized Shirt",
-          seller: "Priya Archives",
-          date: "Aug 12, 2026",
-          price: 75,
-          status: "Delivered",
-          img: "https://images.unsplash.com/photo-1604284195847-88dc4b5a9faa?w=200&h=200&fit=crop&auto=format",
-          trackingNumber: "FC-IND-6619021",
-          carrier: "EcoCourier Express",
-          estimatedDelivery: "Delivered on Aug 15, 2026",
-          address: "Flat 402, Green Meadows, Bengaluru, 560034",
-          buyerId: "usr-buyer-harsha",
-          userId: "harsha@gmail.com",
-        },
-      ]);
-      console.log("🌱 Seeded mock orders for harsha@gmail.com");
+    const harshaSeedOrders = [
+      {
+        id: "#FC-00412",
+        item: "Vintage Levi's 501 Original Fit Denim",
+        seller: "Marco R.",
+        date: "Sep 8, 2026",
+        price: 55,
+        status: "Delivered",
+        img: "https://images.unsplash.com/photo-1582552938357-32b906df40cb?w=400&h=400&fit=crop&auto=format",
+        trackingNumber: "FC-IND-8829104",
+        carrier: "EcoCourier Express (100% Electric)",
+        estimatedDelivery: "Delivered on Sep 11, 2026",
+        address: "Flat 402, Green Meadows, Bengaluru, 560034",
+        buyerId: "usr-buyer-harsha",
+        userId: "harsha@gmail.com",
+      },
+      {
+        id: "#FC-00398",
+        item: "Ganni Pastel Check Organic Cotton Top",
+        seller: "Ana K.",
+        date: "Sep 2, 2026",
+        price: 65,
+        status: "In Transit",
+        img: "https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=400&h=400&fit=crop&auto=format",
+        trackingNumber: "FC-IND-9912034",
+        carrier: "BlueDart CarbonNeutral",
+        estimatedDelivery: "Arriving Tomorrow by 5:00 PM",
+        address: "Flat 402, Green Meadows, Bengaluru, 560034",
+        buyerId: "usr-buyer-harsha",
+        userId: "harsha@gmail.com",
+      },
+      {
+        id: "#FC-00371",
+        item: "Nanushka Vegan Leather Moto Jacket",
+        seller: "Lea B.",
+        date: "Aug 25, 2026",
+        price: 195,
+        status: "Delivered",
+        img: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&h=400&fit=crop&auto=format",
+        trackingNumber: "FC-IND-7734190",
+        carrier: "EcoCourier Express",
+        estimatedDelivery: "Delivered on Aug 28, 2026",
+        address: "Flat 402, Green Meadows, Bengaluru, 560034",
+        buyerId: "usr-buyer-harsha",
+        userId: "harsha@gmail.com",
+      },
+      {
+        id: "#FC-00289",
+        item: "Studio Nicholson Heavyweight Boxy Cotton Tee",
+        seller: "Priya Archives",
+        date: "Aug 12, 2026",
+        price: 45,
+        status: "Delivered",
+        img: "https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=400&h=400&fit=crop&auto=format",
+        trackingNumber: "FC-IND-6619021",
+        carrier: "EcoCourier Express",
+        estimatedDelivery: "Delivered on Aug 15, 2026",
+        address: "Flat 402, Green Meadows, Bengaluru, 560034",
+        buyerId: "usr-buyer-harsha",
+        userId: "harsha@gmail.com",
+      },
+    ];
+    for (const ord of harshaSeedOrders) {
+      await Order.findOneAndUpdate({ id: ord.id }, { $set: ord }, { upsert: true, new: true });
     }
+    console.log("🌱 Synced mock orders for harsha@gmail.com");
 
     const harshaSavedCount = await SavedItem.countDocuments({
       $or: [{ userId: "usr-buyer-harsha" }, { userId: "harsha@gmail.com" }],

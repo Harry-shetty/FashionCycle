@@ -4,27 +4,27 @@ const cats = [
   {
     label: "Jackets",
     count: "14,200",
-    img: "https://images.unsplash.com/photo-1629511565591-a1d494ad6c58?w=600&h=400&fit=crop&auto=format",
+    img: "https://images.unsplash.com/photo-1646654793829-222c56e60300?w=600&h=400&fit=crop&auto=format",
   },
   {
     label: "Denim",
     count: "18,400",
-    img: "https://images.unsplash.com/photo-1642359730306-4e80ff12ff6d?w=600&h=400&fit=crop&auto=format",
+    img: "https://images.unsplash.com/photo-1582552938357-32b906df40cb?w=600&h=400&fit=crop&auto=format",
   },
   {
     label: "Long Coats",
     count: "9,600",
-    img: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=600&h=400&fit=crop&auto=format",
+    img: "https://images.unsplash.com/photo-1539533113208-f6df8cc8b543?w=600&h=400&fit=crop&auto=format",
   },
   {
     label: "Tees & Tops",
     count: "24,800",
-    img: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=600&h=400&fit=crop&auto=format",
+    img: "https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=600&h=400&fit=crop&auto=format",
   },
   {
     label: "Sweaters",
     count: "16,100",
-    img: "https://images.unsplash.com/photo-1589351189946-b8eb5e170ba6?w=600&h=400&fit=crop&auto=format",
+    img: "https://images.unsplash.com/photo-1523523262500-ec13396518c6?w=600&h=400&fit=crop&auto=format",
   },
 ];
 

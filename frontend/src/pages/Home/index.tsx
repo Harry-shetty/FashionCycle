@@ -953,7 +953,7 @@ function MyListings() {
               const imageSrc =
                 (item.images && item.images.length > 0 && item.images[0]) ||
                 (item as any).img ||
-                "https://images.unsplash.com/photo-1629511565591-a1d494ad6c58?w=600&h=800&fit=crop&auto=format";
+                "https://images.unsplash.com/photo-1646654793829-222c56e60300?w=600&h=800&fit=crop&auto=format";
 
               return (
                 <div
