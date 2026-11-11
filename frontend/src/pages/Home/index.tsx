@@ -691,7 +691,7 @@ function StatsRow() {
       className="stats-grid-4"
       style={{
         display: "grid",
-        gridTemplateColumns: "repeat(4, 1fr)",
+        gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
         gap: "1rem",
         marginBottom: "1.5rem",
       }}
@@ -948,12 +948,13 @@ function MyListings() {
         </div>
       ) : (
         <>
-          <div className="four-col-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
+          <div className="four-col-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: "1.25rem" }}>
             {filtered.slice(0, 4).map((item) => {
-              const imageSrc =
-                (item.images && item.images.length > 0 && item.images[0]) ||
-                (item as any).img ||
-                "https://images.unsplash.com/photo-1646654793829-222c56e60300?w=600&h=800&fit=crop&auto=format";
+              const fallbackImg = "/products/lst-001-front.jpg";
+              const itemImages =
+                item.images && item.images.length > 0
+                  ? item.images
+                  : [(item as any).img || fallbackImg];
 
               return (
                 <div
@@ -962,44 +963,46 @@ function MyListings() {
                   style={{
                     cursor: "pointer",
                     position: "relative",
-                    opacity: 1,
-                    transition: "transform 0.25s cubic-bezier(0.16,1,0.3,1)",
+                    minWidth: 0,
+                    display: "flex",
+                    flexDirection: "column",
+                    height: "100%",
+                    background: "rgba(255,255,255,0.02)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "16px",
+                    padding: "0.75rem",
+                    transition: "transform 0.25s cubic-bezier(0.16,1,0.3,1), border-color 0.25s, box-shadow 0.25s",
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-4px)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-4px)";
+                    e.currentTarget.style.borderColor = "rgba(138,223,122,0.4)";
+                    e.currentTarget.style.boxShadow = "0 12px 28px rgba(0,0,0,0.25)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.borderColor = "var(--border)";
+                    e.currentTarget.style.boxShadow = "none";
+                  }}
                 >
-                  <div
-                    style={{
-                      aspectRatio: "3/4",
-                      borderRadius: "14px",
-                      overflow: "hidden",
-                      background: "#1a1a14",
-                      marginBottom: "0.75rem",
-                      position: "relative",
-                    }}
-                  >
-                    <img
-                      src={imageSrc}
-                      alt={item.title}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        objectPosition: "center 20%",
-                        transition: "transform 0.5s cubic-bezier(0.16,1,0.3,1)",
-                      }}
-                      onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.08)")}
-                      onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                  <div style={{ position: "relative" }}>
+                    <ThriftProductImage
+                      images={itemImages}
+                      title={item.title}
+                      aspectRatio="4/5"
+                      badge={item.sold ? "SOLD OUT" : "1 OF 1 • NO RESTOCKS"}
+                      category={item.category}
                     />
                     {item.sold && (
                       <div
                         style={{
                           position: "absolute",
                           inset: 0,
-                          background: "rgba(10,10,8,0.65)",
+                          borderRadius: "14px",
+                          background: "rgba(10,10,8,0.6)",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
+                          zIndex: 3,
                         }}
                       >
                         <span
@@ -1009,54 +1012,73 @@ function MyListings() {
                             color: "var(--accent)",
                             letterSpacing: "0.12em",
                             border: "1px solid var(--accent)",
-                            padding: "0.3rem 0.8rem",
+                            background: "rgba(10,10,8,0.85)",
+                            padding: "0.3rem 0.85rem",
                             borderRadius: "100px",
+                            fontWeight: 700,
                           }}
                         >
                           SOLD
                         </span>
                       </div>
                     )}
-                    <div
-                      style={{
-                        position: "absolute",
-                        bottom: "0.5rem",
-                        right: "0.5rem",
-                        background: "rgba(10,10,8,0.85)",
-                        borderRadius: "100px",
-                        padding: "0.25rem 0.65rem",
-                        fontFamily: "var(--font-display)",
-                        fontSize: "0.85rem",
-                        fontWeight: 700,
-                        color: "var(--accent)",
-                      }}
-                    >
-                      {item.price}₹
+                  </div>
+
+                  <div style={{ padding: "0.85rem 0.25rem 0.25rem", display: "flex", flexDirection: "column", flex: 1, justifyContent: "space-between" }}>
+                    <div>
+                      <div
+                        style={{
+                          fontFamily: "var(--font-display)",
+                          fontSize: "0.95rem",
+                          fontWeight: 700,
+                          lineHeight: 1.3,
+                          minHeight: "2.5rem",
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: "vertical",
+                          overflow: "hidden",
+                          color: "var(--fg)",
+                          marginBottom: "0.35rem",
+                        }}
+                      >
+                        {item.title}
+                      </div>
+                      <div
+                        style={{
+                          fontFamily: "var(--font-mono)",
+                          fontSize: "0.68rem",
+                          color: "var(--muted)",
+                          marginBottom: "0.65rem",
+                        }}
+                      >
+                        {item.brand} · Size {item.size} · {item.condition}
+                      </div>
                     </div>
-                  </div>
-                  <div
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: "0.9rem",
-                      fontWeight: 600,
-                      letterSpacing: "-0.01em",
-                      marginBottom: "0.2rem",
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                    }}
-                  >
-                    {item.title}
-                  </div>
-                  <div
-                    style={{
-                      fontFamily: "var(--font-mono)",
-                      fontSize: "0.62rem",
-                      color: "var(--muted)",
-                      letterSpacing: "0.04em",
-                    }}
-                  >
-                    {item.brand} · {item.size}
+
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto", paddingTop: "0.35rem" }}>
+                      <span
+                        style={{
+                          fontFamily: "var(--font-display)",
+                          fontSize: "1.1rem",
+                          fontWeight: 800,
+                          color: "var(--accent)",
+                        }}
+                      >
+                        {item.price}₹
+                      </span>
+                      <span
+                        style={{
+                          fontFamily: "var(--font-mono)",
+                          fontSize: "0.62rem",
+                          color: item.sold ? "var(--muted)" : "var(--accent)",
+                          background: item.sold ? "rgba(255,255,255,0.05)" : "rgba(138,223,122,0.12)",
+                          padding: "2px 8px",
+                          borderRadius: "100px",
+                        }}
+                      >
+                        {item.sold ? "Sold" : "Active"}
+                      </span>
+                    </div>
                   </div>
                 </div>
               );
@@ -1281,7 +1303,7 @@ function BuyerCuratedDrops() {
           className="four-col-grid"
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+            gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
             gap: "1.25rem",
           }}
         >
@@ -1838,7 +1860,7 @@ function ActivityFeed() {
       >
         Activity Feed
       </h2>
-      <div className="four-col-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1.25rem" }}>
+      <div className="four-col-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: "1.25rem" }}>
         {FEED.map((f, i) => {
           const feedImagesMap: Record<string, string[]> = {
             "Vintage Ralph Lauren Wool Blazer Jacket": ["/products/lst-001-front.jpg", "/products/lst-001-back.jpg"],
@@ -2099,7 +2121,7 @@ function Recommended() {
         </button>
       </div>
 
-      <div className="four-col-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1.25rem" }}>
+      <div className="four-col-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: "1.25rem" }}>
         {RECOMMENDED.map((item, i) => {
           const itemImages = recImagesMap[item.title] || [item.img];
           const mockListing: Listing = {
@@ -2295,7 +2317,7 @@ function ImpactTracker() {
       >
         Your Impact
       </h2>
-      <div className="four-col-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
+      <div className="four-col-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: "1rem" }}>
         {[
           { label: "CO₂ Prevented", value: impact.co2, unit: "kg", icon: "🌿", desc: "Carbon kept out of atmosphere" },
           { label: "Water Saved", value: impact.water, unit: "L", icon: "💧", desc: "Litres vs producing new clothing" },

@@ -27,6 +27,7 @@ interface SellerProfile {
   co2Saved: number;
   initialFollowers: number;
   featuredCategory: string;
+  featuredListingIds: string[];
 }
 
 interface TopSeller {
@@ -59,6 +60,7 @@ const FEATURED_SELLERS: SellerProfile[] = [
     co2Saved: 184.2,
     initialFollowers: 1620,
     featuredCategory: "Denim",
+    featuredListingIds: ["lst-002", "lst-007"],
   },
   {
     id: "seller-02",
@@ -71,7 +73,8 @@ const FEATURED_SELLERS: SellerProfile[] = [
     piecesCirculated: 36,
     co2Saved: 142.8,
     initialFollowers: 1410,
-    featuredCategory: "Dresses",
+    featuredCategory: "Long Coats",
+    featuredListingIds: ["lst-008", "lst-003"],
   },
   {
     id: "seller-03",
@@ -84,7 +87,8 @@ const FEATURED_SELLERS: SellerProfile[] = [
     piecesCirculated: 29,
     co2Saved: 118.5,
     initialFollowers: 1180,
-    featuredCategory: "Outerwear",
+    featuredCategory: "Sweaters",
+    featuredListingIds: ["lst-005", "lst-010"],
   },
   {
     id: "seller-04",
@@ -97,7 +101,8 @@ const FEATURED_SELLERS: SellerProfile[] = [
     piecesCirculated: 26,
     co2Saved: 104.8,
     initialFollowers: 1020,
-    featuredCategory: "Dresses",
+    featuredCategory: "Jackets",
+    featuredListingIds: ["lst-006", "lst-001"],
   },
   {
     id: "seller-05",
@@ -110,7 +115,8 @@ const FEATURED_SELLERS: SellerProfile[] = [
     piecesCirculated: 22,
     co2Saved: 94.2,
     initialFollowers: 860,
-    featuredCategory: "Tops & Tees",
+    featuredCategory: "Tees & Tops",
+    featuredListingIds: ["lst-004", "lst-009"],
   },
   {
     id: "seller-06",
@@ -123,7 +129,8 @@ const FEATURED_SELLERS: SellerProfile[] = [
     piecesCirculated: 18,
     co2Saved: 78.6,
     initialFollowers: 720,
-    featuredCategory: "Outerwear",
+    featuredCategory: "Sweaters",
+    featuredListingIds: ["lst-011", "lst-012"],
   },
 ];
 
@@ -225,6 +232,295 @@ const TOP_SELLERS: TopSeller[] = [
     featuredDrop: "Pleated Trousers & Chunky Cardigans",
   },
 ];
+
+const CREATOR_ARCHIVE_FALLBACKS: Record<string, Listing> = {
+  "lst-001": {
+    id: "lst-001",
+    title: "Vintage Ralph Lauren Wool Blazer Jacket",
+    brand: "Ralph Lauren",
+    size: "L",
+    condition: "Excellent",
+    category: "Jackets",
+    price: 85,
+    images: ["/products/lst-001-front.jpg", "/products/lst-001-back.jpg"],
+    sellerId: "seller-04",
+    createdAt: new Date().toISOString(),
+    sold: false,
+  },
+  "lst-002": {
+    id: "lst-002",
+    title: "Vintage Levi's 501 Original Fit Denim",
+    brand: "Levi's",
+    size: "32",
+    condition: "Good",
+    category: "Denim",
+    price: 55,
+    images: ["/products/lst-002-front.jpg", "/products/lst-002-back.jpg"],
+    sellerId: "seller-01",
+    createdAt: new Date().toISOString(),
+    sold: false,
+  },
+  "lst-003": {
+    id: "lst-003",
+    title: "Massimo Dutti Heavy Wool Long Overcoat",
+    brand: "Massimo Dutti",
+    size: "M",
+    condition: "Excellent",
+    category: "Long Coats",
+    price: 130,
+    images: ["/products/lst-003-front.jpg", "/products/lst-008-front.jpg"],
+    sellerId: "seller-02",
+    createdAt: new Date().toISOString(),
+    sold: false,
+  },
+  "lst-004": {
+    id: "lst-004",
+    title: "Studio Nicholson Heavyweight Boxy Cotton Tee",
+    brand: "Studio Nicholson",
+    size: "M",
+    condition: "Like New",
+    category: "Tees & Tops",
+    price: 45,
+    images: ["/products/lst-004-front.jpg", "/products/lst-004-back.jpg"],
+    sellerId: "seller-05",
+    createdAt: new Date().toISOString(),
+    sold: false,
+  },
+  "lst-005": {
+    id: "lst-005",
+    title: "Filippa K Ribbed Fisherman Wool Sweater",
+    brand: "Filippa K",
+    size: "L",
+    condition: "Like New",
+    category: "Sweaters",
+    price: 92,
+    images: ["/products/lst-005-front.jpg", "/products/lst-005-detail.jpg"],
+    sellerId: "seller-03",
+    createdAt: new Date().toISOString(),
+    sold: false,
+  },
+  "lst-006": {
+    id: "lst-006",
+    title: "Nanushka Vegan Leather Moto Jacket",
+    brand: "Nanushka",
+    size: "M",
+    condition: "Like New",
+    category: "Jackets",
+    price: 195,
+    images: ["/products/lst-006-front.jpg", "/products/lst-006-back.jpg"],
+    sellerId: "seller-04",
+    createdAt: new Date().toISOString(),
+    sold: false,
+  },
+  "lst-007": {
+    id: "lst-007",
+    title: "Acne Studios 1996 High-Rise Straight Denim",
+    brand: "Acne Studios",
+    size: "28",
+    condition: "Excellent",
+    category: "Denim",
+    price: 110,
+    images: ["/products/lst-007-front.jpg", "/products/lst-002-back.jpg"],
+    sellerId: "seller-01",
+    createdAt: new Date().toISOString(),
+    sold: false,
+  },
+  "lst-008": {
+    id: "lst-008",
+    title: "Arket Minimalist Long Trench Coat",
+    brand: "Arket",
+    size: "S",
+    condition: "Good",
+    category: "Long Coats",
+    price: 145,
+    images: ["/products/lst-008-front.jpg", "/products/lst-003-front.jpg"],
+    sellerId: "seller-02",
+    createdAt: new Date().toISOString(),
+    sold: false,
+  },
+  "lst-009": {
+    id: "lst-009",
+    title: "Ganni Pastel Check Organic Cotton Top",
+    brand: "Ganni",
+    size: "M",
+    condition: "Like New",
+    category: "Tees & Tops",
+    price: 65,
+    images: ["/products/lst-009-front.jpg", "/products/lst-004-back.jpg"],
+    sellerId: "seller-05",
+    createdAt: new Date().toISOString(),
+    sold: false,
+  },
+  "lst-010": {
+    id: "lst-010",
+    title: "Loro Piana Chunky Cable-Knit Cashmere Sweater",
+    brand: "Loro Piana",
+    size: "M",
+    condition: "Excellent",
+    category: "Sweaters",
+    price: 240,
+    images: ["/products/lst-010-front.jpg", "/products/lst-005-detail.jpg"],
+    sellerId: "seller-03",
+    createdAt: new Date().toISOString(),
+    sold: false,
+  },
+  "lst-011": {
+    id: "lst-011",
+    title: "The Row Charcoal Pleated Wool Trousers",
+    brand: "The Row",
+    size: "32",
+    condition: "Like New",
+    category: "Denim",
+    price: 165,
+    images: ["/products/lst-011-front.jpg", "/products/lst-002-back.jpg"],
+    sellerId: "seller-06",
+    createdAt: new Date().toISOString(),
+    sold: false,
+  },
+  "lst-012": {
+    id: "lst-012",
+    title: "Olive Cashmere Roll-Neck Knit Sweater",
+    brand: "Loro Piana",
+    size: "L",
+    condition: "Excellent",
+    category: "Sweaters",
+    price: 215,
+    images: ["/products/lst-012-front.jpg", "/products/lst-005-detail.jpg"],
+    sellerId: "seller-06",
+    createdAt: new Date().toISOString(),
+    sold: false,
+  },
+};
+
+function CreatorPieceCard({ item, onSelect }: { item: Listing; onSelect: () => void }) {
+  const [hovered, setHovered] = useState(false);
+  const img1 = item.images && item.images.length > 0 ? item.images[0] : "/products/lst-001-front.jpg";
+  const img2 = item.images && item.images.length > 1 ? item.images[1] : img1;
+
+  return (
+    <div
+      onClick={onSelect}
+      onMouseEnter={(e) => {
+        setHovered(true);
+        e.currentTarget.style.transform = "translateY(-4px)";
+        e.currentTarget.style.borderColor = "rgba(138,223,122,0.4)";
+        e.currentTarget.style.boxShadow = "0 12px 28px rgba(0,0,0,0.25)";
+      }}
+      onMouseLeave={(e) => {
+        setHovered(false);
+        e.currentTarget.style.transform = "translateY(0)";
+        e.currentTarget.style.borderColor = "var(--border)";
+        e.currentTarget.style.boxShadow = "none";
+      }}
+      style={{
+        minWidth: 0,
+        background: "rgba(255,255,255,0.02)",
+        border: "1px solid var(--border)",
+        borderRadius: "16px",
+        padding: "0.75rem",
+        cursor: "pointer",
+        transition: "transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s, box-shadow 0.25s",
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+      }}
+    >
+      <div
+        style={{
+          position: "relative",
+          aspectRatio: "4/5",
+          borderRadius: "12px",
+          background: "#f4f3ef",
+          overflow: "hidden",
+        }}
+      >
+        <img
+          src={img1}
+          alt={item.title}
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: "center",
+            opacity: hovered && img2 !== img1 ? 0 : 1,
+            transform: hovered ? "scale(1.04)" : "scale(1)",
+            transition: "opacity 0.35s ease, transform 0.5s ease",
+          }}
+        />
+        {img2 && img2 !== img1 && (
+          <img
+            src={img2}
+            alt={`${item.title} alternate view`}
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              objectPosition: "center",
+              opacity: hovered ? 1 : 0,
+              transform: hovered ? "scale(1.04)" : "scale(1)",
+              transition: "opacity 0.35s ease, transform 0.5s ease",
+            }}
+          />
+        )}
+        <div
+          style={{
+            position: "absolute",
+            top: "0.55rem",
+            left: "0.55rem",
+            background: "rgba(18, 18, 16, 0.88)",
+            backdropFilter: "blur(6px)",
+            borderRadius: "100px",
+            padding: "3px 8px",
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.58rem",
+            fontWeight: 700,
+            letterSpacing: "0.06em",
+            color: "#f5f4f0",
+            border: "1px solid rgba(255,255,255,0.14)",
+          }}
+        >
+          {item.condition}
+        </div>
+      </div>
+
+      <div style={{ padding: "0.85rem 0.25rem 0.2rem", display: "flex", flexDirection: "column", flex: 1, justifyContent: "space-between" }}>
+        <div>
+          <div
+            style={{
+              fontFamily: "var(--font-display)",
+              fontWeight: 700,
+              fontSize: "0.95rem",
+              lineHeight: 1.3,
+              minHeight: "2.5rem",
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+              marginBottom: "0.25rem",
+            }}
+          >
+            {item.title}
+          </div>
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: "var(--muted)", marginBottom: "0.75rem" }}>
+            {item.brand} · Size {item.size}
+          </div>
+        </div>
+        <div style={{ marginTop: "auto", display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+          <span style={{ fontFamily: "var(--font-display)", fontSize: "1.15rem", fontWeight: 800, color: "var(--accent)" }}>
+            {item.price}₹
+          </span>
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.7rem", color: "var(--muted)" }}>
+            View Details ↗
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function CommunityPage() {
   const navigate = useNavigate();
@@ -359,11 +655,20 @@ export default function CommunityPage() {
     }
   };
 
-  // Active listings for other sellers
+  // Active listings tailored uniquely per creator (using featuredListingIds with safe archive fallback)
   const getSellerListings = (seller: SellerProfile): Listing[] => {
-    const matches = listings.filter((l) => !l.sold);
-    const categoryMatches = matches.filter((l) => l.category === seller.featuredCategory);
-    return (categoryMatches.length > 0 ? categoryMatches : matches).slice(0, 3);
+    const byId = new Map<string, Listing>();
+    listings.forEach((l) => {
+      if (!l.sold) byId.set(l.id, l);
+    });
+
+    const uniquePieces: Listing[] = [];
+    seller.featuredListingIds.forEach((id) => {
+      const resolved = byId.get(id) || CREATOR_ARCHIVE_FALLBACKS[id];
+      if (resolved) uniquePieces.push(resolved);
+    });
+
+    return uniquePieces;
   };
 
   // My listings (for the logged in seller)
@@ -1192,81 +1497,16 @@ export default function CommunityPage() {
                         <div
                           style={{
                             display: "grid",
-                            gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+                            gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
                             gap: "1.25rem",
                           }}
                         >
                           {sellerPieces.map((item) => (
-                            <div
+                            <CreatorPieceCard
                               key={item.id}
-                              onClick={() => navigate(`/product/${item.id}`)}
-                              style={{
-                                background: "#141410",
-                                border: "1px solid var(--border)",
-                                borderRadius: "16px",
-                                overflow: "hidden",
-                                cursor: "pointer",
-                                transition: "transform 0.2s, border-color 0.2s",
-                                display: "flex",
-                                flexDirection: "column",
-                              }}
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.transform = "translateY(-4px)";
-                                e.currentTarget.style.borderColor = "rgba(138,223,122,0.35)";
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.transform = "translateY(0)";
-                                e.currentTarget.style.borderColor = "var(--border)";
-                              }}
-                            >
-                              <div
-                                style={{
-                                  position: "relative",
-                                  aspectRatio: "3/4",
-                                  background: "#1a1a16",
-                                  overflow: "hidden",
-                                }}
-                              >
-                                <img
-                                  src={item.images[0]}
-                                  alt={item.title}
-                                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                                />
-                                <div
-                                  style={{
-                                    position: "absolute",
-                                    top: "0.6rem",
-                                    left: "0.6rem",
-                                    background: "rgba(10,10,8,0.85)",
-                                    backdropFilter: "blur(6px)",
-                                    borderRadius: "100px",
-                                    padding: "0.2rem 0.6rem",
-                                    fontFamily: "var(--font-mono)",
-                                    fontSize: "0.62rem",
-                                    color: "var(--accent)",
-                                  }}
-                                >
-                                  {item.condition}
-                                </div>
-                              </div>
-
-                              <div style={{ padding: "1rem", display: "flex", flexDirection: "column", flex: 1 }}>
-                                <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "0.95rem", marginBottom: "0.25rem" }}>
-                                  {item.title}
-                                </div>
-                                <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: "var(--muted)", marginBottom: "0.75rem" }}>
-                                  {item.brand} · Size {item.size}
-                                </div>
-                                <div style={{ marginTop: "auto", display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                                  <span style={{ fontFamily: "var(--font-display)", fontSize: "1.2rem", fontWeight: 800, color: "var(--accent)" }}>
-                                    {item.price}₹
-                                  </span>
-                                  <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.7rem", color: "var(--muted)" }}>
-                                    View Details ↗
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
+                              item={item}
+                              onSelect={() => navigate(`/product/${item.id}`)}
+                            />
                           ))}
                         </div>
                       </div>
@@ -1844,58 +2084,11 @@ export default function CommunityPage() {
                               }}
                             >
                               {sellerPieces.map((item) => (
-                                <div
+                                <CreatorPieceCard
                                   key={item.id}
-                                  onClick={() => navigate(`/product/${item.id}`)}
-                                  style={{
-                                    background: "#12120e",
-                                    border: "1px solid var(--border)",
-                                    borderRadius: "16px",
-                                    overflow: "hidden",
-                                    cursor: "pointer",
-                                    transition: "transform 0.2s, border-color 0.2s",
-                                  }}
-                                  onMouseEnter={(e) => {
-                                    e.currentTarget.style.transform = "translateY(-4px)";
-                                    e.currentTarget.style.borderColor = "var(--accent)";
-                                  }}
-                                  onMouseLeave={(e) => {
-                                    e.currentTarget.style.transform = "translateY(0)";
-                                    e.currentTarget.style.borderColor = "var(--border)";
-                                  }}
-                                >
-                                  <div style={{ position: "relative", aspectRatio: "3/4", background: "#1a1a16" }}>
-                                    <img src={item.images[0]} alt={item.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                                    <span
-                                      style={{
-                                        position: "absolute",
-                                        top: "0.5rem",
-                                        left: "0.5rem",
-                                        background: "rgba(0,0,0,0.8)",
-                                        borderRadius: "100px",
-                                        padding: "0.2rem 0.55rem",
-                                        fontFamily: "var(--font-mono)",
-                                        fontSize: "0.62rem",
-                                        color: "var(--accent)",
-                                      }}
-                                    >
-                                      {item.condition}
-                                    </span>
-                                  </div>
-                                  <div style={{ padding: "0.85rem" }}>
-                                    <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "0.92rem", marginBottom: "0.2rem" }}>
-                                      {item.title}
-                                    </div>
-                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                                      <span style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "1.1rem", color: "var(--accent)" }}>
-                                        {item.price}₹
-                                      </span>
-                                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "var(--muted)" }}>
-                                        View ↗
-                                      </span>
-                                    </div>
-                                  </div>
-                                </div>
+                                  item={item}
+                                  onSelect={() => navigate(`/product/${item.id}`)}
+                                />
                               ))}
                             </div>
                           </div>
@@ -2088,70 +2281,16 @@ export default function CommunityPage() {
                           <div
                             style={{
                               display: "grid",
-                              gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+                              gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
                               gap: "1.25rem",
                             }}
                           >
                             {sellerPieces.map((item) => (
-                              <div
+                              <CreatorPieceCard
                                 key={item.id}
-                                onClick={() => navigate(`/product/${item.id}`)}
-                                style={{
-                                  background: "#141410",
-                                  border: "1px solid var(--border)",
-                                  borderRadius: "16px",
-                                  overflow: "hidden",
-                                  cursor: "pointer",
-                                  transition: "transform 0.2s, border-color 0.2s",
-                                  display: "flex",
-                                  flexDirection: "column",
-                                }}
-                                onMouseEnter={(e) => {
-                                  e.currentTarget.style.transform = "translateY(-4px)";
-                                  e.currentTarget.style.borderColor = "rgba(138,223,122,0.35)";
-                                }}
-                                onMouseLeave={(e) => {
-                                  e.currentTarget.style.transform = "translateY(0)";
-                                  e.currentTarget.style.borderColor = "var(--border)";
-                                }}
-                              >
-                                <div style={{ position: "relative", aspectRatio: "3/4", background: "#1a1a16", overflow: "hidden" }}>
-                                  <img src={item.images[0]} alt={item.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                                  <div
-                                    style={{
-                                      position: "absolute",
-                                      top: "0.6rem",
-                                      left: "0.6rem",
-                                      background: "rgba(10,10,8,0.85)",
-                                      backdropFilter: "blur(6px)",
-                                      borderRadius: "100px",
-                                      padding: "0.2rem 0.6rem",
-                                      fontFamily: "var(--font-mono)",
-                                      fontSize: "0.62rem",
-                                      color: "var(--accent)",
-                                    }}
-                                  >
-                                    {item.condition}
-                                  </div>
-                                </div>
-
-                                <div style={{ padding: "1rem", display: "flex", flexDirection: "column", flex: 1 }}>
-                                  <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "0.95rem", marginBottom: "0.25rem" }}>
-                                    {item.title}
-                                  </div>
-                                  <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: "var(--muted)", marginBottom: "0.75rem" }}>
-                                    {item.brand} · Size {item.size}
-                                  </div>
-                                  <div style={{ marginTop: "auto", display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                                    <span style={{ fontFamily: "var(--font-display)", fontSize: "1.2rem", fontWeight: 800, color: "var(--accent)" }}>
-                                      {item.price}₹
-                                    </span>
-                                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.7rem", color: "var(--muted)" }}>
-                                      View Details ↗
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
+                                item={item}
+                                onSelect={() => navigate(`/product/${item.id}`)}
+                              />
                             ))}
                           </div>
                         </div>

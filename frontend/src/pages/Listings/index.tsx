@@ -349,8 +349,8 @@ export default function ListingsPage() {
                 }}
               >
                 {/* Image */}
-                <div style={{ aspectRatio: "4/5", background: "#1a1a14", position: "relative", overflow: "hidden" }}>
-                  <img src={item.images[0]} alt={item.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                <div style={{ aspectRatio: "4/5", background: "#f4f3ef", position: "relative", overflow: "hidden" }}>
+                  <img src={item.images[0]} alt={item.title} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }} />
                   {item.sold && (
                     <div style={{ position: "absolute", inset: 0, background: "rgba(10,10,8,0.72)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.78rem", color: "var(--accent)", letterSpacing: "0.12em", border: "1px solid var(--accent)", padding: "0.35rem 0.9rem", borderRadius: "100px", fontWeight: 700 }}>
@@ -368,7 +368,7 @@ export default function ListingsPage() {
 
                 {/* Content */}
                 <div style={{ padding: "1.25rem", display: "flex", flexDirection: "column", flex: 1 }}>
-                  <div style={{ fontFamily: "var(--font-display)", fontSize: "1.05rem", fontWeight: 700, letterSpacing: "-0.01em", marginBottom: "0.35rem", color: "var(--fg)" }}>
+                  <div style={{ fontFamily: "var(--font-display)", fontSize: "1.05rem", fontWeight: 700, letterSpacing: "-0.01em", lineHeight: 1.3, minHeight: "2.75rem", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", marginBottom: "0.35rem", color: "var(--fg)" }}>
                     {item.title}
                   </div>
                   <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.7rem", color: "var(--muted)", letterSpacing: "0.04em", marginBottom: "0.6rem" }}>
