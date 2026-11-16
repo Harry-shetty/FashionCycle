@@ -274,8 +274,8 @@ const WELCOME_MESSAGE: Message = {
 
 export default function FashionChatbot() {
   const { user, isAuthenticated, isBuyer, isSeller } = useAuth();
-  // Chatbot is strictly enabled for buyer role (new & existing accounts), disabled for sellers
-  if (!isAuthenticated || isSeller || !isBuyer) return null;
+  // Chatbot is strictly enabled for seller role, disabled for buyers
+  if (!isAuthenticated || !isSeller || isBuyer) return null;
   const currentUserId = user?.email || "default-user";
 
   const [isOpen, setIsOpen] = useState(false);

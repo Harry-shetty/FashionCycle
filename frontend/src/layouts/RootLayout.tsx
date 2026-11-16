@@ -38,8 +38,8 @@ export default function RootLayout() {
       <Footer />
       <GlobalModals />
       <ToastContainer />
-      {/* AI CycleBot is enabled strictly for buyers (new & existing), never for sellers */}
-      {isAuthenticated && isBuyer && !isSeller && <FashionChatbot />}
+      {/* AI CycleBot is enabled strictly for sellers, disabled for buyers */}
+      {isAuthenticated && isSeller && !isBuyer && <FashionChatbot />}
     </>
   );
 }

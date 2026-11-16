@@ -49,7 +49,7 @@ export default function ProfilePage() {
   const stats = [
     ...(isSeller ? [{ label: "Active Listings", value: listings.filter((l) => !l.sold).length }] : []),
     { label: "Orders Tracked", value: orders.length },
-    ...(isBuyer ? [{ label: "AI Appraisals", value: savedAppraisals.length }] : []),
+    ...(isSeller ? [{ label: "AI Appraisals", value: savedAppraisals.length }] : []),
     { label: "CO₂ Saved (kg)", value: impact.co2.toFixed(1) },
   ];
 
@@ -294,7 +294,7 @@ export default function ProfilePage() {
             ...(isSeller ? [{ label: "My Listings", desc: `${listings.length} pieces managed`, href: "/listings" }] : []),
             { label: "Orders & Shipments", desc: `${orders.length} active orders`, href: "/orders" },
             { label: "Sustainability Report", desc: `${impact.co2.toFixed(1)} kg CO₂ avoided`, href: "/impact" },
-            ...(isBuyer
+            ...(isSeller
               ? [
                   {
                     label: "CycleBot AI History",
@@ -366,8 +366,8 @@ export default function ProfilePage() {
           )}
         </div>
 
-        {/* CycleBot AI History Section (Buyers only) */}
-        {isBuyer && (
+        {/* CycleBot AI History Section (Sellers only) */}
+        {isSeller && (
           <div
             style={{
               background: "var(--card-bg)",
